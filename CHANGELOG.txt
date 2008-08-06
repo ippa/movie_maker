@@ -1,0 +1,19 @@
+2008-08-06:
+- Too much to list, but new actions.. zoom, rotate, play_sound etc
+- Better chaining with "after" method
+- Alot more samples
+
+2008-08-05:
+- various renaming, :target_surface => :screen, :surface => sprite
+- All action-work is now done with sprites instead of surfaces, a sprite must meet some common rubygameish criterias: have attributes x,y and image.
+- make it more rubygame'ish 
+
+2008-07-31:
+- New better namespace/class names
+- able to pass a Color to :background params
+- new examples
+- better organizing of files
+- screen.update Outside of eventloop makes stuff faster :)
+
+2008-07-30:
+- first version with basic example

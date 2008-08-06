@@ -1,0 +1,21 @@
+#!/usr/bin/ruby
+require File.join("..", "rubygame_movie_maker")
+
+include Rubygame
+include MovieMaker
+
+Rubygame.init()
+Surface.autoload_dirs = [ "media" ]
+Sound.autoload_dirs = [ "media" ]
+	
+@screen = Screen.set_mode([800, 600], 0, [HWSURFACE, DOUBLEBUF])
+@background = Surface.autoload("outdoor_scene.png")
+@axe = Sprite.new("axe.png")
+@chop = Sound["chop.wav"]
+
+movie = Movie.new(:screen => @screen, :background => @background)
+#
+# Monsterline that demonstrates moviemakes chaining
+#
+movie.between(0, 2000).move(@axe, :from => [0,200], :to => [700,350]).rotate(@axe, :angle => 370*2, :direction => :clockwise).after.play_sound(@chop)
+movie.play(4000)
