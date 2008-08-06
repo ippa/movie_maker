@@ -41,10 +41,7 @@ You can make the movie play by calling update on it in your gameloop -- just lik
 == Chaining Simple example
 movie_maker supports various chaining of actions, we could for example modify our last example like this:
 
-# Between seconds 1-9, move the sprite across the screen...
-# rotate it 360 degrees at the same time, 
-# and when it's done, play a sound woff. 
-# Without the ".after."-chaining the sound would have been played after 1 seconds, not 10.
+# Between seconds 1-9, move the sprite across the screen,rotate it 360 degrees at the same time, and when it's done, play a sound woff. Without the ".after."-chaining the sound would have been played after 1 seconds, not 10.
 
 @movie.between(1000,10000).move(@sprite, :from => [0,0], :to => [800,600]).rotate(@sprite, :angle => 360).after.play_sound(Sound[:woff])
 
