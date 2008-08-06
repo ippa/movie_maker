@@ -214,6 +214,11 @@ module Rubygame
 			def initialize(options = {})
 				super
 				@sound = options[:object]
+				@volume = options[:volume] || 1.0
+				@repeats = options[:repeats] || 1
+				@fade_in = options[:fade_in] || nil
+				@stop_after = @duration				
+				@sound.volume = @volume
 				@playing = false
 			end
 			

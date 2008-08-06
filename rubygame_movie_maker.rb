@@ -27,7 +27,7 @@ module Rubygame
 			#
 			
 			attr_accessor :actions
-			attr_reader :screen, :background, :clock, :timer
+			attr_reader :screen, :background, :clock
 			def initialize(options = {})
 				@actions = []
 				@screen = options[:screen] || nil
@@ -40,8 +40,7 @@ module Rubygame
 					
 				@sprites = {}
 				@target_framerate = options[:target_framerate] || 100
-				@tick = 0
-				@timer = 0
+				@tick = @start_at = @stop_at = 0  
 			end
 			
 			#
@@ -244,7 +243,8 @@ module Rubygame
 			# @movie.at(1000).play_sound(@drip).delay(100).play_sound(@drip, {:volume => 0.5}).delay(100).play_sound(@drip, {:volume => 0.2})
 			#
 			def delay(time)
-				@start_at = @stop_at + time
+				@start_at = @stop_at||@start_at + time
+				self
 			end
 
 		end
