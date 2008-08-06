@@ -1,22 +1,10 @@
 #
 # One Action specifies a certain action, for example the movement of a sprite
-# Or to show a sprite, or hide...
+# Or to show a sprite, rotate, zoom or hide etc
 #
 #
 module Rubygame
 	module MovieMaker
-		
-		#
-		# base
-		#
-		class BaseAction
-			attr_accessor :screen, :background, :screen, :x, :y
-			attr_reader :start_at, :stop_at
-			
-			def initialize
-			end
-		end
-		
 		#
 		# All actions inherit from this base-class and Should call super in their initialize.
 		# Takes an option-hash: 
@@ -42,12 +30,11 @@ module Rubygame
 			
 			# Actually blit the sprite onto the screen
 			def draw
-				#@sprite.image.blit(@screen, [@sprite.x.to_i,@sprite.y.to_i])
 				@sprite.image.blit(@screen, @sprite.rect)
 			end
 			
+			# undraw the sprite by blitting the background over it
 			def undraw
-				#@background.blit(@screen, [@sprite.x.to_i,@sprite.y.to_i], [@sprite.x.to_i,@sprite.y.to_i,*@sprite.size])
 				@background.blit(@screen, @sprite.rect, @sprite.rect)
 			end
 	
@@ -99,9 +86,6 @@ module Rubygame
 				@from_y = @from[1]
 				@to_x = @to[0]
 				@to_y = @to[1]
-				
-				@x = @from_x
-				@y = @from_y
 				
 				@image = @sprite.image
 				setup
