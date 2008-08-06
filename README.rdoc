@@ -31,6 +31,7 @@ You can make the movie play by calling update on it in your gameloop -- just lik
 
 # 1 sec (1000ms) into the movie, start moving the sprite from x/y: 0,0 (top left of the screen)
 # during 9 seconds (until 10000ms into the movie), set the speed so it will reach position x/y 800,600.
+
 @movie.between(1000,10000).move(@sprite, :from => [0,0], :to =>[800,600])
 
 # Play the movie you're created, blocks until it's done
@@ -44,6 +45,7 @@ movie_maker supports various chaining of actions, we could for example modify ou
 # rotate it 360 degrees at the same time, 
 # and when it's done, play a sound woff. 
 # Without the ".after."-chaining the sound would have been played after 1 seconds, not 10.
+
 @movie.between(1000,10000).move(@sprite, :from => [0,0], :to => [800,600]).rotate(@sprite, :angle => 360).after.play_sound(Sound[:woff])
 
 
