@@ -44,10 +44,22 @@ module Rubygame
 				@timer = 0
 			end
 			
+			#
+			# Calculates the length of the movie by checking stop_at-times of all @actions that the movie consists of.
+			#
+			# TODO: 
+			# - current the method at() doesn't provide at stop_at, which makes total_playtime fail
+			#
 			def total_playtime
 				@actions.inject(0) { |time, action| action.stop_at > time ? action.stop_at : time }
 			end
 						
+			#
+			# Loops through the movie's full timeline and updates all the @actions 
+			# This method blocks until the movie ends
+			#
+			# To play the movie Within your own gameloop, use update()
+			#
 			def play(loop_until = nil)
 				loop_until = total_playtime	if loop_until.nil?
 				
@@ -56,27 +68,39 @@ module Rubygame
 				while @clock.lifetime < loop_until
 					update(@clock.lifetime)
 					@tick = @clock.tick()
-					#@screen.title = "framerate: %d - lifetime: %d - currently updating %d objects" % [@clock.framerate, @clock.lifetime, @updated_count]
 					yield	 if block_given?
 				end
 			end
 			
+			#
+			# Starts the clock which time will be sent to all events update()'s
+			# Also paint a background, if any.
+			#
 			def setup
 				@clock = Clock.new
 				@clock.target_framerate = @target_framerate
 				@background.blit(@screen, [0, 0])	if @background
 			end
 			
+			#
+			# update() goes through all @actions and calls undraw/update/draw
+			# some events only have a play-method, call play on thoose
+			#
 			def update(current_time)
 				@updated_count = 0
 				@actions.each do |action|
+					#
+					# If action responds to method play(), play it if start_at time has been reached and it's not allready playing
+					#
 					if action.respond_to? :play
 						action.play	if	current_time > action.start_at && !action.playing
+					#
+					#	If the stop_at-time for action has been reached, just draw it (otherwise other objects will paint over it for good)
+					#	
 					elsif current_time > action.stop_at
 						action.draw						
-					#
-					# Only undraw/update/draw if action has started. 
-					# compare global clock with actions start_at attribute!
+					# 
+					# If action is active on the timelime - undraw/update/draw
 					#
 					elsif current_time > action.start_at && current_time < action.stop_at
 						action.undraw
@@ -85,14 +109,26 @@ module Rubygame
 						@updated_count += 1
 					end
 				end
-				@screen.flip
+				@screen.flip		# screen.update?
 			end
 			
+			
+			#
+			# Stops/resets the movie
+			# NOT YET IMPLEMENTED
+			#
 			def stop
 			end
 			
 			#
-			# Various ways of adding actions to the movie timeline
+			# Pauses the movie, which should resume with a call to play()
+			# NOT YET IMPLEMENTED
+			#
+			def pause
+			end
+			
+			#
+			# Fix this to behave like a shortcut to between() or at()?
 			#
 			def []=(start_at, stop_at, action=nil)
 				resource_name = start_at
@@ -100,13 +136,6 @@ module Rubygame
 				if resource_name.is_a? Symbol
 					@sprites[resource_name] = resource								if resource.is_a? Sprite
 					@sprites[resource_name] = Sprite.new(resource)		if resource.is_a? String
-				#else
-				#	action.target_surface = @screen
-				#	action.background = @background
-				#	action.surface.set_colorkey(action.surface.get_at(0,0))   # this needs to be more flexible
-				#	action.start_at = start_at
-				#	action.stop_at = stop_at
-				#	@actions << action
 				end
 			end
 
@@ -114,39 +143,19 @@ module Rubygame
 				@sprites[resource_name.to_sym]
 			end
 	
-			def between(start_at, stop_at)
-				@start_at = start_at
-				@stop_at = stop_at
-				self
-			end
-			
-			def at(start_at)
-				@start_at = start_at
-				@stop_at = nil
-				self
-			end
-
-			def during(length)
-				@start_at = @clock.lifetime	## this probably needs to be set when the movie Starts.
-				@stop_at = length
-				self
-			end
-			
-			def after
-				@start_at = @stop_at
-				self
-			end
-			
+						
 			def add_action(action)
 				@actions << action
 			end
 			
+			#
 			# Ripped from rails Inflector
+			# Used to convert move()-calls to a new instance of class Move
+			# and play_sound()-calls to a new instance of PlaySound .. etc.
+			#
 			def classify(table_name)
-				# strip out any leading schema name
 				camelize(singularize(table_name.to_s.sub(/.*\./, '')))
 			end
-			
 			def camelize(lower_case_and_underscored_word, first_letter_in_uppercase = true)
 				if first_letter_in_uppercase
 					lower_case_and_underscored_word.to_s.gsub(/\/(.?)/) { "::#{$1.upcase}" }.gsub(/(?:^|_)(.)/) { $1.upcase }
@@ -177,10 +186,67 @@ module Rubygame
 													}
 				options = arg[1] || {}
 				options = default_options.merge(options)
-				#puts options.inspect
 				@actions << klass.new(options)				
 				self
 			end
+
+			#
+			# Bellow are methods to time actions and make them chainable
+			#
+			
+			#
+			# Start following action start_at millisecs into the movie
+			# .. and stop it stop_at millisecs into the movie.
+			#
+			def between(start_at, stop_at)
+				@start_at = start_at
+				@stop_at = stop_at
+				self
+			end
+			
+			#
+			# Starts action at a start_time millisecs into the movie, no specific stop time
+			#
+			# Example:
+			# @movie.at(2000).play_sound(@moo_sound)
+			#
+			def at(start_at)
+				@start_at = start_at
+				@stop_at = nil
+				self
+			end
+
+			#
+			# Start following action right away and specify how long is should run
+			#
+			def during(length)
+				@start_at = @clock.lifetime	## this probably needs to be set when the movie Starts.
+				@stop_at = length
+				self
+			end
+			
+			#
+			# Start following action after the last one finishes
+			#
+			# Example:
+			# @movie.between(0,1000).move(@stone, :from => [0,0], :to [0,400]).after.play_sound(@crash)
+			#
+			def after
+				@start_at = @stop_at
+				self
+			end
+			
+			#
+			# Start following action after the last one finishes + a millisecs delay argument
+			#
+			# Example:
+			#
+			# @movie.at(1000).play_sound(@drip).delay(100).play_sound(@drip, {:volume => 0.5}).delay(100).play_sound(@drip, {:volume => 0.2})
+			#
+			def delay(time)
+				@start_at = @stop_at + time
+			end
+
 		end
 	end
 end
