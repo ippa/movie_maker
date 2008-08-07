@@ -24,4 +24,4 @@ duration = 1000
 	offset = index * duration
 	movie.between(offset, offset+duration).zoom(sprite, :scale_from => 5, :scale_to => 0.1).after.play_sound(Sound["hit.wav"])
 end
-movie.play(4000)
+movie.play(6000)

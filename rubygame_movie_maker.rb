@@ -30,6 +30,7 @@ module Rubygame
 			attr_reader :screen, :background, :clock
 			def initialize(options = {})
 				@actions = []
+				@onetime_actions = []
 				@screen = options[:screen] || nil
 				
 				@background = options[:background] || nil
@@ -67,6 +68,7 @@ module Rubygame
 				while @clock.lifetime < loop_until
 					update(@clock.lifetime)
 					@tick = @clock.tick()
+					@screen.title = "[framerate: #{@clock.framerate}]"
 					yield	 if block_given?
 				end
 			end
@@ -101,20 +103,14 @@ module Rubygame
 				end
 				
 				@actions.each do |action|
-					#
-					# If action responds to method play(), play it if start_at time has been reached and it's not allready playing
-					#
-					if action.started?(current_time)
-						if action.respond_to? :play
-							action.play		if !action.playing?
-						else 
-							dirty_rects << action.draw
-							@updated_count += 1
-						end
-					end
+					dirty_rects << action.draw	if action.started?(current_time)
 				end
-
+				
 				@screen.update_rects(dirty_rects)
+				
+				@onetime_actions.each do |action|
+					action.play	if !action.playing? && action.started?(current_time)
+				end
 			end
 			
 			
@@ -179,18 +175,31 @@ module Rubygame
 			def method_missing(method, *arg)
 				klass = Kernel.const_get(camelize(method))
 				
-				sprite	= arg.first
-				sprite = self[arg.first]	if arg.first.is_a? Symbol
+				object	= arg.first
+				object = self[arg.first]	if arg.first.is_a? Symbol
 				
 				default_options = { :start_at => @start_at, 
 														:stop_at => @stop_at,
 														:screen => @screen,
 														:background => @background,
-														:object => sprite
+														:object => object
 													}
 				options = arg[1] || {}
 				options = default_options.merge(options)
-				@actions << klass.new(options)				
+				action = klass.new(options)
+								
+				#
+				# Separate actions that needs 1-time trigger
+				#
+				if object.kind_of? Sound		
+					@onetime_actions << action
+				#
+				# And thoose who needs constant update/drawing
+				#
+				else
+					@actions << action
+				end
+				 
 				self
 			end
 
@@ -267,22 +276,22 @@ if $0 == __FILE__
 	Sound.autoload_dirs = [ File.join("samples", "media"), "media" ]
 	
 	#@screen = Screen.set_mode([1280, 1024], 0, [FULLSCREEN, DOUBLEBUF, HWSURFACE])
-	@screen = Screen.set_mode([800, 600], 0, [DOUBLEBUF, HWSURFACE])
+	#@screen = Screen.set_mode([800, 600], 0, [DOUBLEBUF, HWSURFACE])
+	@screen = Screen.set_mode([800, 600], 0)
 	@background = Surface.autoload("outdoor_scene.png")
+	@background = Surface.autoload("outdoor_scene.bmp")
+	#@background = Color[:black]
 	
-	p Rubygame::VERSIONS
+	#p Rubygame::VERSIONS
 	#p Surface.new([1,1],0,[SWSURFACE,SRCCOLORKEY,SRCALPHA]).flags
 	#p @spaceship.image.flags
-	#exit
-	movie = Movie.new(:screen => @screen, :background => @background)
+	movie = Movie.new(:screen => @screen, :background => @background, :target_framerate => 200)
 	
-	(0..2).each do |nr|
-		#fall_time = 1000
-		#start_at = nr * fall_time
-		#stop_at = nr*fall_time+fall_time
+	(0..4).each do |nr|
+		#@spaceship = Sprite.new("spaceship_noalpha.png")
 		@spaceship = Sprite.new("spaceship.png")
-		movie.between(0, 5000).move(@spaceship, :from => [0,rand(300)], :to => [400+rand(300),rand(350)])
-		movie.between(0, 5000).rotate(@spaceship, :angle => 360, :direction => :clockwise)	
+		movie.between(0, 10000).move(@spaceship, :from => [0,rand(300)], :to => [400+rand(300),rand(350)])
+		#movie.between(0, 10000).rotate(@spaceship, :angle => 360, :direction => :clockwise)	
 	end
 	movie.play
 end

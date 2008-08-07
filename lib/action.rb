@@ -218,8 +218,8 @@ module Rubygame
 			end
 			
 			# Empty but existing for action-mainloop
-			def draw; end;
-			def undraw; end;
+			# def draw; end;
+			# def undraw; end;
 		end
 
 		#
@@ -238,10 +238,13 @@ module Rubygame
 				@playing = false
 			end
 			
-			def playing?(current_time)
+			def started?(current_time)
+				current_time > self.start_at
+			end
+
+			def playing?
 				@playing
 			end
-			alias :started? :playing? 
 						
 			def play
 				@sound.play
