@@ -8,11 +8,11 @@ Rubygame.init()
 Surface.autoload_dirs = [ "media" ]
 Sound.autoload_dirs = [ "media" ]
 	
-@screen = Screen.set_mode([800, 600], 0, [HWSURFACE, DOUBLEBUF])
-movie = Movie.new(:screen => @screen, :background => Color[:black])
+@screen = Screen.set_mode([800, 600], 0)
+movie = Movie.new(:screen => @screen, :background => Color[:black], :target_framerate => 200)
 
 start_at = stop_at = 0
-(1..1000).each do |nr|
+(1..500).each do |nr|
 	x = rand(800)
 	start_at = nr / 50.0
 	stop_at = nr / 50.0 + 1.0

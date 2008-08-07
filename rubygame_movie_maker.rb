@@ -67,15 +67,13 @@ module Rubygame
 				else
 					loop_until *= 1000
 				end
-				
-				p loop_until
-				
+								
 				setup
 				
 				while @clock.lifetime < loop_until
 					update(@clock.lifetime)
 					@tick = @clock.tick()
-					@screen.title = "[framerate: #{@clock.framerate}]"
+					@screen.title = "[framerate: #{@clock.framerate.to_i}] [Spriteupdates last tick: #{@updated_count}]"
 					yield	 if block_given?
 				end
 			end
@@ -100,13 +98,13 @@ module Rubygame
 				dirty_rects = []
 
 				@actions.each do |action|
-					dirty_rects << action.undraw
-					
-					# Only update if action is active on the timeline
+					# Only undraw/update actions that are active on the timeline
 					if action.playing?(current_time)
+						dirty_rects << action.undraw
 						action.update(current_time)	
 						@updated_count += 1
 					end
+					
 				end
 				
 				@actions.each do |action|

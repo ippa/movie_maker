@@ -104,7 +104,7 @@ module Rubygame
 				@x_step = (@to_x - @from_x).to_f / @duration.to_f
 				@y_step = (@to_y - @from_y).to_f / @duration.to_f				
 				@angle = 360 - (Math.atan(@y_step / @x_step) * 180.0/Math::PI) + 90
-				@sprite.image = @image.rotozoom(@angle,[1,1], true)
+				@sprite.image = @image.rotozoom(@angle, [1,1], true)
 				old_center = @sprite.rect.center
 				@sprite.rect.size = @sprite.image.size
 				@sprite.rect.center = old_center
