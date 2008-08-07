@@ -37,7 +37,15 @@ module Rubygame
 			def undraw
 				@background.blit(@screen, @sprite.rect, @sprite.rect)
 			end
-	
+			
+			def started?(current_time)
+				current_time > self.start_at
+			end
+
+			def playing?(current_time)
+				(current_time > self.start_at) && (current_time < self.stop_at)
+			end
+			
 		end
 		
 		#
@@ -67,6 +75,7 @@ module Rubygame
 			
 			# The core of the MoveClass, the actual move-logic
 			def update(time)
+				time -=  self.start_at
 				@sprite.rect.centerx = @from_x + time * @x_step
 				@sprite.rect.centery = @from_y + time * @y_step
 			end
@@ -103,6 +112,7 @@ module Rubygame
 			
 			# The core of the MoveClass, the actual move-logic
 			def update(time)
+				time -=  self.start_at
 				@sprite.rect.centerx = @from_x + time * @x_step
 				@sprite.rect.centery = @from_y + time * @y_step
 			end
@@ -125,6 +135,7 @@ module Rubygame
 			end
 			
 			def update(time)
+				time -=  self.start_at
 				@sprite.image = @image.rotozoom(@angle_total, [1,1], true)	if @direction == :counterclockwise
 				@sprite.image = @image.rotozoom(-@angle_total, [1,1], true)	if @direction == :clockwise
 				@angle_total = @angle_step * time
@@ -156,6 +167,7 @@ module Rubygame
 			end
 			
 			def update(time)
+				time -= self.start_at
 				@sprite.image = @image.rotozoom(0, [@scale_total, @scale_total], true)
 				@scale_total = @scale_from + @scale_step * time
 				
@@ -204,6 +216,10 @@ module Rubygame
 				@stop_at = options[:stop_at]
 				@duration = (@stop_at||0) - (@start_at||0)
 			end
+			
+			# Empty but existing for action-mainloop
+			def draw; end;
+			def undraw; end;
 		end
 
 		#
@@ -222,6 +238,11 @@ module Rubygame
 				@playing = false
 			end
 			
+			def playing?(current_time)
+				@playing
+			end
+			alias :started? :playing? 
+						
 			def play
 				@sound.play
 				@playing = true

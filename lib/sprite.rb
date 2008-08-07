@@ -14,6 +14,7 @@ module Rubygame
 				super()
 				@image = Surface.autoload(file)
 				@rect = Rect.new(x,y,*@image.size)
+				@image.set_colorkey(@image.get_at(0,0))
 			end
 			
 		end
@@ -43,6 +44,7 @@ module Rubygame
 				@rect = Rect.new(@position[0], @position[1], *@font.size_text(string))
 				@image = Surface.new(@rect.size, 0, [SRCCOLORKEY])
 				@font.render(@string, true, @color).blit(@image,[0,0])
+				@image.set_colorkey(@image.get_at(0,0))
 			end
 			
 		end

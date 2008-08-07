@@ -79,36 +79,42 @@ module Rubygame
 				@clock = Clock.new
 				@clock.target_framerate = @target_framerate
 				@background.blit(@screen, [0, 0])	if @background
+				@screen.update
 			end
 			
 			#
 			# update() goes through all @actions and calls undraw/update/draw
-			# some events only have a play-method, call play on thoose
+			# some events only have a play-method, call play on thoose (play_sound for example)
 			#
 			def update(current_time)
 				@updated_count = 0
+				dirty_rects = []
+
+				@actions.each do |action|
+					dirty_rects << action.undraw
+					
+					# Only update if action is active on the timeline
+					if action.playing?(current_time)
+						action.update(current_time)	
+						@updated_count += 1
+					end
+				end
+				
 				@actions.each do |action|
 					#
 					# If action responds to method play(), play it if start_at time has been reached and it's not allready playing
 					#
-					if action.respond_to? :play
-						action.play	if	current_time > action.start_at && !action.playing
-					#
-					#	If the stop_at-time for action has been reached, just draw it (otherwise other objects will paint over it for good)
-					#	
-					elsif current_time > action.stop_at
-						action.draw						
-					# 
-					# If action is active on the timelime - undraw/update/draw
-					#
-					elsif current_time > action.start_at && current_time < action.stop_at
-						action.undraw
-						action.update(current_time - action.start_at)
-						action.draw
-						@updated_count += 1
+					if action.started?(current_time)
+						if action.respond_to? :play
+							action.play		if !action.playing?
+						else 
+							dirty_rects << action.draw
+							@updated_count += 1
+						end
 					end
 				end
-				@screen.flip		# screen.update?
+
+				@screen.update_rects(dirty_rects)
 			end
 			
 			
@@ -171,7 +177,6 @@ module Rubygame
 			# Ex. movie.between(0,2000).move(:ball, :from => [100,100], :to => [500,100])
 			#
 			def method_missing(method, *arg)
-				#klass = Kernel.const_get(method.to_s.capitalize)
 				klass = Kernel.const_get(camelize(method))
 				
 				sprite	= arg.first
@@ -257,27 +262,27 @@ end
 if $0 == __FILE__
 	include Rubygame
 	include MovieMaker
-	Rubygame.init()
+	Rubygame.init
 	Surface.autoload_dirs = [ File.join("samples", "media"), "media" ]
 	Sound.autoload_dirs = [ File.join("samples", "media"), "media" ]
 	
-	#
-	# 
-	#
-	@screen = Screen.set_mode([800, 600], 0)
+	#@screen = Screen.set_mode([1280, 1024], 0, [FULLSCREEN, DOUBLEBUF, HWSURFACE])
+	@screen = Screen.set_mode([800, 600], 0, [DOUBLEBUF, HWSURFACE])
 	@background = Surface.autoload("outdoor_scene.png")
-	@axe = Sprite.new("axe.png")
-	@chop = Sound["chop.wav"]
 	
+	p Rubygame::VERSIONS
+	#p Surface.new([1,1],0,[SWSURFACE,SRCCOLORKEY,SRCALPHA]).flags
+	#p @spaceship.image.flags
+	#exit
 	movie = Movie.new(:screen => @screen, :background => @background)
-	movie.between(0, 2000).move(@axe, :from => [0,200], :to => [700,350])
-	movie.between(0, 2000).rotate(@axe, :angle => 370*2, :direction => :clockwise)
-	movie.at(2000).play_sound(@chop)
 	
-	#movie.between(0,1000).move(@ball, :from => [100,100], :to => [500,100])	
-	#movie.between(1000,2000).move(@ball, :from => [500,100], :to => [500,500])
-	#movie.between(2000,3000).move(@ball, :from => [500,500], :to => [100,500])
-	#movie.between(3000,4000).move(@ball, :from => [100,500], :to => [100,100])
-		
-	movie.play(4000)
+	(0..2).each do |nr|
+		#fall_time = 1000
+		#start_at = nr * fall_time
+		#stop_at = nr*fall_time+fall_time
+		@spaceship = Sprite.new("spaceship.png")
+		movie.between(0, 5000).move(@spaceship, :from => [0,rand(300)], :to => [400+rand(300),rand(350)])
+		movie.between(0, 5000).rotate(@spaceship, :angle => 360, :direction => :clockwise)	
+	end
+	movie.play
 end
