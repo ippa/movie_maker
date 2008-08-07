@@ -23,9 +23,9 @@ module Rubygame
 				@sprite = options[:object]
 				@background = options[:background]
 				@screen = options[:screen]
-				@start_at = options[:start_at]
-				@stop_at = options[:stop_at]
-				@duration = (@stop_at||0) - (@start_at||0)
+				@start_at = (options[:start_at]||0) * 1000
+				@stop_at = (options[:stop_at]||0) * 1000
+				@duration = @stop_at - @start_at
 			end
 			
 			# Actually blit the sprite onto the screen
@@ -212,14 +212,10 @@ module Rubygame
 		class SimpleAction			
 			attr_reader :start_at, :stop_at
 			def initialize(options = {})
-				@start_at = options[:start_at]
-				@stop_at = options[:stop_at]
-				@duration = (@stop_at||0) - (@start_at||0)
-			end
-			
-			# Empty but existing for action-mainloop
-			# def draw; end;
-			# def undraw; end;
+				@start_at = (options[:start_at]||0) * 1000
+				@stop_at = (options[:stop_at]||0) * 1000
+				@duration = @stop_at - @start_at
+			end			
 		end
 
 		#

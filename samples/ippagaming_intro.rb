@@ -16,7 +16,7 @@ movie = Movie.new(:screen => @screen, :background => Color[:white])
 #
 @ippa_gaming = Sprite.new("ippa_gaming.png")
 @black = Sprite.new("black.bmp")
-movie.between(1000,3000).fade(@ippa_gaming)
-movie.between(1000,3000).show(@ippa_gaming)
+movie.between(1,3).fade(@ippa_gaming)
+movie.between(1,3).show(@ippa_gaming)
 
 movie.play

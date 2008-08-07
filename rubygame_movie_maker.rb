@@ -61,7 +61,14 @@ module Rubygame
 			# To play the movie Within your own gameloop, use update()
 			#
 			def play(loop_until = nil)
-				loop_until = total_playtime	if loop_until.nil?
+				
+				if loop_until.nil?
+					loop_until = total_playtime
+				else
+					loop_until *= 1000
+				end
+				
+				p loop_until
 				
 				setup
 				
@@ -290,7 +297,7 @@ if $0 == __FILE__
 	(0..4).each do |nr|
 		#@spaceship = Sprite.new("spaceship_noalpha.png")
 		@spaceship = Sprite.new("spaceship.png")
-		movie.between(0, 10000).move(@spaceship, :from => [0,rand(300)], :to => [400+rand(300),rand(350)])
+		movie.between(0, 1).move(@spaceship, :from => [0,rand(300)], :to => [400+rand(300),rand(350)])
 		#movie.between(0, 10000).rotate(@spaceship, :angle => 360, :direction => :clockwise)	
 	end
 	movie.play
