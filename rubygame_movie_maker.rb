@@ -90,8 +90,16 @@ module Rubygame
 			end
 			
 			#
-			# update() goes through all @actions and calls undraw/update/draw
-			# some events only have a play-method, call play on thoose (play_sound for example)
+			# update() 
+			# - goes through all @actions and calls undraw/update/draw.
+			# - goes through all @onetime_actions and calls play on them once.
+			#
+			# Several optimizations are possible here:
+			# - sort @actions after start_at so update doesn't have to loop through all events each time
+			#   only until start_at isn't lower then current_time anymore
+			# - remove "played-out" actions from @actions
+			# - remove "played-out" actions from @onetime_actions
+			#
 			#
 			def update(current_time)
 				@updated_count = 0
@@ -103,8 +111,7 @@ module Rubygame
 						dirty_rects << action.undraw
 						action.update(current_time)	
 						@updated_count += 1
-					end
-					
+					end					
 				end
 				
 				@actions.each do |action|
