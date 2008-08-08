@@ -3,6 +3,7 @@ require 'rubygems'
 require 'rubygame'
 require File.join(File.dirname(__FILE__), 'lib', 'action')
 require File.join(File.dirname(__FILE__), 'lib', 'sprite')
+require File.join(File.dirname(__FILE__), 'lib', 'core_extensions')
 
 #
 # Rubygame::MovieMaker
@@ -291,7 +292,7 @@ if $0 == __FILE__
 	#@screen = Screen.set_mode([800, 600], 0, [DOUBLEBUF, HWSURFACE])
 	@screen = Screen.set_mode([800, 600], 0)
 	@background = Surface.autoload("outdoor_scene.png")
-	@background = Surface.autoload("outdoor_scene.bmp")
+	#@background = Surface.autoload("outdoor_scene.bmp")
 	#@background = Color[:black]
 	
 	#p Rubygame::VERSIONS
@@ -299,11 +300,11 @@ if $0 == __FILE__
 	#p @spaceship.image.flags
 	movie = Movie.new(:screen => @screen, :background => @background, :target_framerate => 200)
 	
-	(0..4).each do |nr|
+	(0..3).each do |nr|
 		#@spaceship = Sprite.new("spaceship_noalpha.png")
 		@spaceship = Sprite.new("spaceship.png")
-		movie.between(0, 1).move(@spaceship, :from => [0,rand(300)], :to => [400+rand(300),rand(350)])
-		#movie.between(0, 10000).rotate(@spaceship, :angle => 360, :direction => :clockwise)	
+		movie.between(0, 4).move(@spaceship, :from => [0,rand(300)], :to => [400+rand(300),rand(350)])
+		movie.between(0, 4).rotate(@spaceship, :angle => 360, :direction => :clockwise, :cache => true)
 	end
 	movie.play
 end

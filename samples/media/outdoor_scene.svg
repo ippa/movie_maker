@@ -225,7 +225,7 @@
        y="6.0002456" />
     <path
        sodipodi:type="arc"
-       style="opacity:0.90082643;fill:url(#linearGradient3399);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3453)"
+       style="opacity:1;fill:url(#linearGradient3399);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3453)"
        id="path3351"
        sodipodi:cx="1127"
        sodipodi:cy="383"
@@ -235,7 +235,7 @@
        transform="matrix(1.3238036,0,0,1.1870855,-432.75559,-277.91718)" />
     <path
        sodipodi:type="arc"
-       style="opacity:0.90082643;fill:url(#linearGradient3459);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3453)"
+       style="opacity:1;fill:url(#linearGradient3459);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3453)"
        id="path3457"
        sodipodi:cx="1127"
        sodipodi:cy="383"
@@ -245,17 +245,20 @@
        transform="matrix(1.2278758,0,0,1.1870855,-442.63612,-409.68365)" />
     <path
        sodipodi:type="arc"
-       style="opacity:0.90082643;fill:url(#linearGradient3465);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3453)"
+       style="opacity:1;fill:url(#linearGradient3465);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3453)"
        id="path3463"
        sodipodi:cx="1127"
        sodipodi:cy="383"
        sodipodi:rx="123"
        sodipodi:ry="119"
        d="M 1250,383 A 123,119 0 1 1 1004,383 A 123,119 0 1 1 1250,383 z"
-       transform="matrix(1.6499582,0,0,1.1870855,-923.04255,-528.3922)" />
+       transform="matrix(1.6499582,0,0,1.1870855,-923.04255,-528.3922)"
+       inkscape:export-filename="C:\Dev\projects\rubygame_movie_maker\samples\media\outdoor_scene.png"
+       inkscape:export-xdpi="70"
+       inkscape:export-ydpi="70" />
     <path
        sodipodi:type="arc"
-       style="opacity:0.90082643;fill:url(#linearGradient3469);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3453)"
+       style="opacity:1;fill:url(#linearGradient3469);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3453)"
        id="path3467"
        sodipodi:cx="1127"
        sodipodi:cy="383"
@@ -265,7 +268,7 @@
        transform="matrix(0.9113139,0,0,1.1870855,-256.95827,-412.05783)" />
     <path
        sodipodi:type="arc"
-       style="opacity:0.90082643;fill:url(#linearGradient3473);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3453)"
+       style="opacity:1;fill:url(#linearGradient3473);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3453)"
        id="path3471"
        sodipodi:cx="1127"
        sodipodi:cy="383"
@@ -275,7 +278,7 @@
        transform="matrix(1.0360203,0,0,0.8977958,-301.92923,-141.00333)" />
     <path
        sodipodi:type="arc"
-       style="opacity:0.90082643;fill:url(#linearGradient3477);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3453)"
+       style="opacity:1;fill:url(#linearGradient3477);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3453)"
        id="path3475"
        sodipodi:cx="1127"
        sodipodi:cy="383"
@@ -285,7 +288,7 @@
        transform="matrix(1.0456131,0,0,0.8578935,-94.456575,-310.90619)" />
     <path
        sodipodi:type="arc"
-       style="opacity:0.90082643;fill:url(#linearGradient3501);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3453)"
+       style="opacity:1;fill:url(#linearGradient3501);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3453)"
        id="path3499"
        sodipodi:cx="1127"
        sodipodi:cy="383"
@@ -295,7 +298,7 @@
        transform="matrix(0.9113139,0,0,0.6683591,-227.46047,-355.83585)" />
     <path
        sodipodi:type="arc"
-       style="opacity:0.90082643;fill:url(#linearGradient3505);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3453)"
+       style="opacity:1;fill:url(#linearGradient3505);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3453)"
        id="path3503"
        sodipodi:cx="1127"
        sodipodi:cy="383"
@@ -303,5 +306,11 @@
        sodipodi:ry="119"
        d="M 1250,383 A 123,119 0 1 1 1004,383 A 123,119 0 1 1 1250,383 z"
        transform="matrix(0.9304996,0,0,0.6783345,22.297204,-381.02405)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path3499"
+       id="use3182"
+       style="opacity:1" />
   </g>
 </svg>

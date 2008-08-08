@@ -8,10 +8,11 @@ module Rubygame
 		class Sprite
 			include Sprites::Sprite
 			
-			attr_reader :image
+			attr_reader :image, :file
 			attr_accessor :rect
 			def initialize(file, x=0, y=0)
 				super()
+				@file = file
 				@image = Surface.autoload(file)
 				@rect = Rect.new(x,y,*@image.size)
 				@image.set_colorkey(@image.get_at(0,0))

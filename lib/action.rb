@@ -125,6 +125,7 @@ module Rubygame
 				super
 				@angle = options[:angle]
 				@direction = options[:direction] || :clockwise
+				@cache = options[:cache] || false
 				@image = @sprite.image
 				setup
 			end
@@ -132,12 +133,22 @@ module Rubygame
 			def setup
 				@angle_step = @angle.to_f / @duration.to_f
 				@angle_total = 0
+				
+				#
+				# Fill the cache with all angles
+				#
+				if @cache
+					(0..360).each do |angle|
+						@image.rotozoom_cached(angle, [1,1], true, @sprite.file)
+					end
+				end
 			end
 			
 			def update(time)
-				time -=  self.start_at
-				@sprite.image = @image.rotozoom(@angle_total, [1,1], true)	if @direction == :counterclockwise
-				@sprite.image = @image.rotozoom(-@angle_total, [1,1], true)	if @direction == :clockwise
+				time -= self.start_at
+				@sprite.image = @image.rotozoom_cached(@angle_total, [1,1], true, @sprite.file)	if @direction == :counterclockwise
+				@sprite.image = @image.rotozoom_cached(-@angle_total, [1,1], true, @sprite.file)	if @direction == :clockwise
+			
 				@angle_total = @angle_step * time
 				
 				old_center = @sprite.rect.center
