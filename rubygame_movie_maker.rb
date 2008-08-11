@@ -165,7 +165,7 @@ module MovieMaker
 		def gosu_draw(current_time)
 			@background.draw(0, 0, 0)	if	@background
 			@actions.select { |action| action.started?(current_time) }.each do |action|
-				action.sprite.image.draw_rot(action.sprite.x, action.sprite.y, 1, 0)
+				action.sprite.image.draw_rot(action.sprite.x, action.sprite.y, 1, 0, 0.5, 0.5, 1, 1, 0xffffffff, :additive)
 			end
 		end
 			

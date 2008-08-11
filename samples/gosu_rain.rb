@@ -6,7 +6,6 @@ class GameWindow < Gosu::MovieMakerWindow
 	def initialize
 		super
 		setup_movie
-		
 	end
 	
 	def setup_movie
