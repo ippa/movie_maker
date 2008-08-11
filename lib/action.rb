@@ -27,16 +27,6 @@ module Rubygame
 				@stop_at = (options[:stop_at]||0) * 1000
 				@duration = @stop_at - @start_at
 			end
-						
-			# Actually blit the sprite onto the screen
-			#def draw
-			#	@sprite.image.blit(@screen, @sprite.rect)
-			#end
-			
-			# undraw the sprite by blitting the background over it
-			#def undraw
-			#	@background.blit(@screen, @sprite.rect, @sprite.rect)
-			#end
 			
 			def started?(current_time)
 				current_time > self.start_at
@@ -45,7 +35,6 @@ module Rubygame
 			def playing?(current_time)
 				(current_time > self.start_at) && (current_time < self.stop_at)
 			end
-			
 		end
 		
 		#

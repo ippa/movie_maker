@@ -1,5 +1,6 @@
 #!/usr/bin/ruby
 require 'rubygems'
+require 'gosu'
 require 'rubygame'
 require File.join(File.dirname(__FILE__), 'lib', 'action')
 require File.join(File.dirname(__FILE__), 'lib', 'sprite')
@@ -25,24 +26,26 @@ module Rubygame
 			# Takes an options-hash as argument:
 			# :screen	=> the screen to draw on 
 			# :target_framerate => what framerate should it aim for, defaults to 60
+			# :background => Color or Imageinstance
+			# :framework	=> :rubygame (default) or :gosu
 			#
 			
 			attr_accessor :actions
 			attr_reader :screen, :background, :clock
 			def initialize(options = {})
-				@actions = []
-				@onetime_actions = []
 				@screen = options[:screen] || nil
-				
+				@framework = options[:framework] || :rubygame	# this can also be :gosu
+				@target_framerate = options[:target_framerate] || 100
 				@background = options[:background] || nil
 				if options[:background].kind_of? Rubygame::Color::ColorRGB
 					@background = Surface.new(@screen.size)
 					@background.draw_box_s([0,0],[@screen.width,@screen.height], options[:background])
 				end
 					
+				@actions = []
+				@onetime_actions = []
 				@sprites = {}
-				@target_framerate = options[:target_framerate] || 100
-				@tick = @start_at = @stop_at = 0  
+				@tick = @start_at = @stop_at = 0
 			end
 			
 			#
@@ -62,8 +65,8 @@ module Rubygame
 			# To play the movie Within your own gameloop, use update()
 			#
 			def play(options = {})
-				@framework = options[:framework] || :rubygame    							# this can also be :gosu
-				@movie_stop_at = options[:stop_at] ? options[:stop_at] * 1000.0 : stop_at
+				@framework ||= options[:framework] || :rubygame    							# this can also be :gosu
+				@movie_stop_at ||= options[:stop_at] ? options[:stop_at] * 1000.0 : stop_at
 											
 				setup
 				
@@ -302,22 +305,19 @@ if $0 == __FILE__
 	Surface.autoload_dirs = [ File.join("samples", "media"), "media" ]
 	Sound.autoload_dirs = [ File.join("samples", "media"), "media" ]
 	
-	#@screen = Screen.set_mode([1280, 1024], 0, [FULLSCREEN, DOUBLEBUF, HWSURFACE])
-	#@screen = Screen.set_mode([800, 600], 0, [DOUBLEBUF, HWSURFACE])
 	@screen = Screen.set_mode([800, 600], 0)
 	@background = Surface.autoload("outdoor_scene.png")
-	#@background = Surface.autoload("outdoor_scene.bmp")
 	#@background = Color[:black]
 	
-	#p Rubygame::VERSIONS
-	#p Surface.new([1,1],0,[SWSURFACE,SRCCOLORKEY,SRCALPHA]).flags
-	#p @spaceship.image.flags
-	movie = Movie.new(:screen => @screen, :background => @background, :target_framerate => 200)
+	movie = Movie.new(:framework => :rubygame, 
+										:screen => @screen, 
+										:background => @background, 
+										:target_framerate => 200)
 	
 	(0..3).each do |nr|
 		@spaceship = Sprite.new("spaceship_noalpha.png")
 		movie.between(0, 4).move(@spaceship, :from => [0,rand(300)], :to => [400+rand(300),rand(350)])
-		movie.between(0, 4).rotate(@spaceship, :angle => 360, :direction => :clockwise, :cache => true)
+		#movie.between(0, 4).rotate(@spaceship, :angle => 360, :direction => :clockwise, :cache => true)
 	end
 	movie.play
 end
