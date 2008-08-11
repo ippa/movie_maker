@@ -282,6 +282,7 @@ module MovieMaker
 			@start_at = @stop_at
 			self
 		end
+		alias :then :after 
 			
 		#
 		# Start following action after the last one finishes + a millisecs delay argument
