@@ -301,8 +301,7 @@ if $0 == __FILE__
 	movie = Movie.new(:screen => @screen, :background => @background, :target_framerate => 200)
 	
 	(0..3).each do |nr|
-		#@spaceship = Sprite.new("spaceship_noalpha.png")
-		@spaceship = Sprite.new("spaceship.png")
+		@spaceship = Sprite.new("spaceship_noalpha.png")
 		movie.between(0, 4).move(@spaceship, :from => [0,rand(300)], :to => [400+rand(300),rand(350)])
 		movie.between(0, 4).rotate(@spaceship, :angle => 360, :direction => :clockwise, :cache => true)
 	end

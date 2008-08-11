@@ -27,7 +27,7 @@ module Rubygame
 				@stop_at = (options[:stop_at]||0) * 1000
 				@duration = @stop_at - @start_at
 			end
-			
+						
 			# Actually blit the sprite onto the screen
 			def draw
 				@sprite.image.blit(@screen, @sprite.rect)
@@ -76,8 +76,8 @@ module Rubygame
 			# The core of the MoveClass, the actual move-logic
 			def update(time)
 				time -=  self.start_at
-				@sprite.rect.centerx = @from_x + time * @x_step
-				@sprite.rect.centery = @from_y + time * @y_step
+				@sprite.x = @from_x + time * @x_step
+				@sprite.y = @from_y + time * @y_step
 			end
 			
 		end
@@ -105,16 +105,14 @@ module Rubygame
 				@y_step = (@to_y - @from_y).to_f / @duration.to_f				
 				@angle = 360 - (Math.atan(@y_step / @x_step) * 180.0/Math::PI) + 90
 				@sprite.image = @image.rotozoom(@angle, [1,1], true)
-				old_center = @sprite.rect.center
-				@sprite.rect.size = @sprite.image.size
-				@sprite.rect.center = old_center
+				@sprite.realign_center
 			end
 			
 			# The core of the MoveClass, the actual move-logic
 			def update(time)
 				time -=  self.start_at
-				@sprite.rect.centerx = @from_x + time * @x_step
-				@sprite.rect.centery = @from_y + time * @y_step
+				@sprite.x = @from_x + time * @x_step
+				@sprite.y = @from_y + time * @y_step
 			end
 			
 		end
@@ -148,12 +146,8 @@ module Rubygame
 				time -= self.start_at
 				@sprite.image = @image.rotozoom_cached(@angle_total, [1,1], true, @sprite.file)	if @direction == :counterclockwise
 				@sprite.image = @image.rotozoom_cached(-@angle_total, [1,1], true, @sprite.file)	if @direction == :clockwise
-			
 				@angle_total = @angle_step * time
-				
-				old_center = @sprite.rect.center
-				@sprite.rect.size = @sprite.image.size
-				@sprite.rect.center = old_center
+				@sprite.realign_center			
 			end
 			
 		end
@@ -181,10 +175,7 @@ module Rubygame
 				time -= self.start_at
 				@sprite.image = @image.rotozoom(0, [@scale_total, @scale_total], true)
 				@scale_total = @scale_from + @scale_step * time
-				
-				old_center = @sprite.rect.center
-				@sprite.rect.size = @sprite.image.size
-				@sprite.rect.center = old_center
+				@sprite.realign_center				
 			end
 			
 		end

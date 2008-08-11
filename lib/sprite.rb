@@ -18,6 +18,20 @@ module Rubygame
 				@image.set_colorkey(@image.get_at(0,0))
 			end
 			
+			#
+			# Rubygame X/Y setters/getters
+			#
+			def x=(value); 	@rect.centerx = value;	end
+			def x;					@rect.centerx;					end
+			def y=(value); 	@rect.centery = value;	end
+			def y;					@rect.centery;					end
+			
+			def realign_center
+				old_center = @rect.center
+				@rect.size = @image.size
+				@rect.center = old_center
+			end
+			
 		end
 		
 		#
@@ -47,8 +61,21 @@ module Rubygame
 				@font.render(@string, true, @color).blit(@image,[0,0])
 				@image.set_colorkey(@image.get_at(0,0))
 			end
+
+			#
+			# Rubygame X/Y setters/getters
+			#
+			def x=(value); 	@rect.centerx = value;	end
+			def x;					@rect.centerx;					end
+			def y=(value); 	@rect.centery = value;	end
+			def y;					@rect.centery;					end
+
+			def realign_center
+				old_center = @rect.center
+				@rect.size = @image.size
+				@rect.center = old_center
+			end
 			
-		end
-		
+		end		
 	end
 end
