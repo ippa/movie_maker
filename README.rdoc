@@ -27,7 +27,7 @@ You can make the movie play by calling update on it in your gameloop -- just lik
 
 # Sets up the movie, give it your initiated @screen-object and @background. MovieMaker supports autocreation of simple colored background as you can see bellow
 
-@movie = Rubygame::MovieMaker.new(:screen => @screen, :background => Color[:black]) 
+@movie = MovieMaker::Movie.new(:screen => @screen, :background => Color[:black]) 
 
 # 1 sec (1000ms) into the movie, start moving the sprite from x/y: 0,0 (top left of the screen)
 # during 9 seconds (until 10000ms into the movie), set the speed so it will reach position x/y 800,600.
