@@ -89,9 +89,9 @@ module MovieMaker
 			attr_reader :image, :file
 			attr_accessor :x, :y
 			def initialize(file, x=0, y=0)
-				super()
 				@file = file
-				@image = Surface.autoload(file)
+				@x, @y = x, y
+				@image = Surface.autoload(@file)
 			end
 			
 			# Only relevant with rubygame
@@ -108,13 +108,15 @@ module MovieMaker
 			attr_reader :image
 			attr_accessor :x, :y
 			def initialize(string, options={})
-				super()
 				@string = string
 				@color = options[:color] || Color[:black]
 				@size = options[:size] || 15
 				@position = options[:position] || [0,0]
 				@fontname = options[:fontname] || "FreeSans.ttf"
 				@font = options[:font] || nil
+				
+				@x = options[:x] || @position[0]
+				@y = options[:y] || @position[1]
 				
 				if @font.nil?
 					@font = TTF.new(File.join("fonts", @fontname), @size)

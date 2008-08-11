@@ -17,7 +17,7 @@ module MovieMaker
 		# Provides 2 basic methods: draw and undraw
 		#
 		class SpriteAction
-			attr_accessor :sprite, :background, :screen, :x, :y
+			attr_accessor :sprite, :background, :screen
 			attr_reader :start_at, :stop_at
 			def initialize(options = {})
 				@sprite = options[:object]
@@ -29,11 +29,11 @@ module MovieMaker
 			end
 			
 			def started?(current_time)
-				current_time > self.start_at
+				current_time >= self.start_at
 			end
 
 			def playing?(current_time)
-				(current_time > self.start_at) && (current_time < self.stop_at)
+				(current_time >= self.start_at) && (current_time < self.stop_at)
 			end
 		end
 		
@@ -51,8 +51,8 @@ module MovieMaker
 				@to_x = @to[0]
 				@to_y = @to[1]
 				
-				@x = @from_x
-				@y = @from_y
+				@sprite.x = @from_x
+				@sprite.y = @from_y
 				
 				setup
 			end

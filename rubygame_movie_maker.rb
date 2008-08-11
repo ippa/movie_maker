@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
-$: << "./lib"
+$: << File.join(File.dirname(__FILE__), 'lib')
 ['rubygems','gosu','rubygame'].each do |gem|
 	require gem
 end
 
-['action','sprite','core_extensions'].each do |lib|
+['action','sprite','core_extensions', 'gosu_clock'].each do |lib|
 	require File.join(File.dirname(__FILE__), 'lib', lib)
 end
 
@@ -22,7 +22,13 @@ end
 # - Keeping track of what sprite/surface to paint to, framerate etc
 #
 module MovieMaker
+
 	class Movie
+
+		
+		attr_accessor :actions
+		attr_reader :screen, :background, :clock, :updated_count, :stop_at
+		
 		#
 		# Takes an options-hash as argument:
 		# :screen	=> the screen to draw on 
@@ -31,8 +37,6 @@ module MovieMaker
 		# :framework	=> :rubygame (default) or :gosu
 		#
 			
-		attr_accessor :actions
-		attr_reader :screen, :background, :clock
 		def initialize(options = {})
 			@screen = options[:screen] || nil
 			@framework = options[:framework] || :rubygame	# this can also be :gosu
@@ -71,9 +75,19 @@ module MovieMaker
 			setup
 				
 			while @clock.lifetime < @movie_stop_at
-				rubygame_update(@clock.lifetime)
 				@tick = @clock.tick()
-				@screen.title = "[framerate: #{@clock.framerate.to_i}] [Spriteupdates last tick: #{@updated_count}]"
+				
+				title = "[framerate: #{@clock.framerate.to_i}] [Spriteupdates last tick: #{@updated_count}]"
+				
+				if @framework == :rubygame
+					@screen.title = title 
+					rubygame_update(@clock.lifetime)	
+				else
+					@screen.caption = title
+					gosu_update(@clock.lifetime)
+					gosu_draw(@clock.lifetime)
+				end
+					
 				yield	 if block_given?
 			end
 		end
@@ -83,12 +97,17 @@ module MovieMaker
 		# Also paint a background, if any.
 		#
 		def setup
-			@clock = Clock.new
+			@clock = ::Gosu::Clock.new
 			@clock.target_framerate = @target_framerate
-			@background.blit(@screen, [0, 0])	if @background
-			@screen.update
+			if @framework == :rubygame
+				@background.blit(@screen, [0, 0])	if @background
+				@screen.update
+			end
 		end
-			
+		
+		def playing?(current_time)
+			current_time <= stop_at 
+		end
 		#
 		# rubygame_update() - Rubygame specific update
 		# Rubygame specific include: blit, sprite rects, dirty_rects and update_rects
@@ -131,15 +150,22 @@ module MovieMaker
 		def gosu_update(current_time)
 			@updated_count = 0
 				
-			@background.draw(0, 0, 0)
 			@actions.select { |action| action.started?(current_time) }.each do |action|
 				action.update(current_time)	
-				action.sprite.image.draw_rot(action.sprite.x, action.sprite.y, 1, 0)
 				@updated_count += 1
 			end
 				
 			@onetime_actions.select { |action| !action.playing? and action.started?(current_time) }.each do |action|
 				action.play
+			end
+		end
+		#
+		# gosu_update - GOSU specific updateloop
+		#
+		def gosu_draw(current_time)
+			@background.draw(0, 0, 0)	if	@background
+			@actions.select { |action| action.started?(current_time) }.each do |action|
+				action.sprite.image.draw_rot(action.sprite.x, action.sprite.y, 1, 0)
 			end
 		end
 			
@@ -273,55 +299,13 @@ module MovieMaker
 end
 
 #
-# GOSU takes a slighty different approach then Rubygame opening window / canvas
-#
-class GosuGameWindow < Gosu::Window
-	$: << "./lib"
-	include MovieMaker::Gosu				# Use Gosu
-	
-	# Make Surface & Sound behave like shortcuts to GOSUs Image & Sample
-	#require 'gosu_autoload'
-	
-	# Provides a rubygame-like clock with GOSU
-	#require 'gosu_clock'
-
-  def initialize
-    $screen = super(800, 600, false)
-		
-		Surface.autoload_dirs = [ File.join("samples", "media"), "media" ]
-		Sound.autoload_dirs = [ File.join("samples", "media"), "media" ]
-	
-		@screen = $screen
-		@background = Surface.autoload("outdoor_scene.png")
-	
-		movie = Movie.new(:framework => :gosu,
-											:screen => @screen,
-											:background => @background,
-											:target_framerate => 200)
-	
-		(0..3).each do |nr|
-			@spaceship = Sprite.new("spaceship_noalpha.png")
-			movie.between(0, 4).move(@spaceship, :from => [0,rand(300)], :to => [400+rand(300),rand(350)])
-			#movie.between(0, 4).rotate(@spaceship, :angle => 360, :direction => :clockwise, :cache => true)
-		end
-		movie.play
-	end
-end
-
-#
 # Test the MovieMaker class, a first crude spec
 # This code will change alot as I use it as a quick way of testing various new stuff out.
 #
 if $0 == __FILE__
-	include Rubygame
-	include MovieMaker
-	#include MovieMaker::Action
-	include MovieMaker::Rubygame		# Use Rubygame
-	#include MovieMaker::Gosu				# Use Gosu
-	
-	
-	#GosuGameWindow.new.show # FIRST GOSU TRYOUT!
-	#exit
+	include MovieMaker						# A must for actions to work
+	include Rubygame							# for easy access to rubygame stuff
+	include MovieMaker::Rubygame	# for easy access to moviemakers special rubygamesprites
 	
 	Surface.autoload_dirs = [ File.join("samples", "media"), "media" ]
 	Sound.autoload_dirs = [ File.join("samples", "media"), "media" ]
@@ -329,15 +313,15 @@ if $0 == __FILE__
 	@screen = Screen.set_mode([800, 600], 0)
 	@background = Surface.autoload("outdoor_scene.png")
 	
-	movie = Movie.new(:framework => :gosu,
+	movie = Movie.new(:framework => :rubygame,
 										:screen => @screen,
 										:background => @background,
 										:target_framerate => 200)
 	
-	(0..3).each do |nr|
+	(0..5).each do |nr|
 		@spaceship = Sprite.new("spaceship_noalpha.png")
 		movie.between(0, 4).move(@spaceship, :from => [0,rand(300)], :to => [400+rand(300),rand(350)])
-		#movie.between(0, 4).rotate(@spaceship, :angle => 360, :direction => :clockwise, :cache => true)
+		movie.between(0, 4).rotate(@spaceship, :angle => 360, :direction => :clockwise, :cache => true)
 	end
 	movie.play
 end

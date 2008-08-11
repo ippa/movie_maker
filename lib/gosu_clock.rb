@@ -17,7 +17,7 @@
 #	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #++
 
-module Rubygame
+module Gosu
 		#  Clock provides class methods for tracking running time and delaying
 		#  execution of the program for specified time periods. This is used to
 		#  provide a consistent framerate, prevent the program from using
@@ -33,7 +33,7 @@ module Rubygame
 			
 			# Make Rubygame::Clock work with GOSUs "milliseconds"
 			def self.runtime
-				milliseconds
+				Gosu::milliseconds
 			end
 			
 			def self.delay(time)
@@ -136,4 +136,4 @@ module Rubygame
 			end
 
 		end # class Clock
-end #module Rubygame
+end #module Gosu
