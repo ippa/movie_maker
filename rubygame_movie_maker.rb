@@ -51,8 +51,8 @@ module Rubygame
 			# TODO: 
 			# - current the method at() doesn't provide at stop_at, which makes total_playtime fail
 			#
-			def total_playtime
-				@actions.inject(0) { |time, action| action.stop_at > time ? action.stop_at : time }
+			def stop_at
+				@movie_stop_at ||= @actions.inject(0) { |time, action| action.stop_at > time ? action.stop_at : time }
 			end
 						
 			#
@@ -61,18 +61,14 @@ module Rubygame
 			#
 			# To play the movie Within your own gameloop, use update()
 			#
-			def play(loop_until = nil)
-				
-				if loop_until.nil?
-					loop_until = total_playtime
-				else
-					loop_until *= 1000
-				end
-								
+			def play(options = {})
+				@framework = options[:framework] || :rubygame    							# this can also be :gosu
+				@movie_stop_at = options[:stop_at] ? options[:stop_at] * 1000.0 : stop_at
+											
 				setup
 				
-				while @clock.lifetime < loop_until
-					update(@clock.lifetime)
+				while @clock.lifetime < @movie_stop_at
+					rubygame_update(@clock.lifetime)
 					@tick = @clock.tick()
 					@screen.title = "[framerate: #{@clock.framerate.to_i}] [Spriteupdates last tick: #{@updated_count}]"
 					yield	 if block_given?
@@ -91,7 +87,9 @@ module Rubygame
 			end
 			
 			#
-			# update() 
+			# rubygame_update() - Rubygame specific update
+			# Rubygame specific include: blit, sprite rects, dirty_rects and update_rects
+			#
 			# - goes through all @actions and calls undraw/update/draw.
 			# - goes through all @onetime_actions and calls play on them once.
 			#
@@ -102,27 +100,43 @@ module Rubygame
 			# - remove "played-out" actions from @onetime_actions
 			#
 			#
-			def update(current_time)
+			def rubygame_update(current_time)
 				@updated_count = 0
 				dirty_rects = []
 
-				@actions.each do |action|
-					# Only undraw/update actions that are active on the timeline
-					if action.playing?(current_time)
-						dirty_rects << action.undraw
-						action.update(current_time)	
-						@updated_count += 1
-					end					
+				# Only undraw/update actions that are active on the timeline
+				@actions.select { |action| action.playing?(current_time) }.each do |action|
+					dirty_rects << @background.blit(@screen, action.sprite.rect, action.sprite.rect) 
+					action.update(current_time)	
+					@updated_count += 1
 				end
 				
-				@actions.each do |action|
-					dirty_rects << action.draw	if action.started?(current_time)
+				@actions.select { |action| action.started?(current_time) }.each do |action|
+					dirty_rects << action.sprite.image.blit(@screen, action.sprite.rect)
 				end
 				
 				@screen.update_rects(dirty_rects)
 				
-				@onetime_actions.each do |action|
-					action.play	if !action.playing? && action.started?(current_time)
+				@onetime_actions.select { |action| !action.playing? and action.started?(current_time) }.each do |action|
+					action.play
+				end
+			end
+			
+			#
+			# gosu_update - GOSU specific updateloop
+			#
+			def gosu_update(current_time)
+				@updated_count = 0
+				
+				@background.draw(0, 0, 0)
+				@actions.select { |action| action.started?(current_time) }.each do |action|
+					action.update(current_time)	
+					action.sprite.image.draw_rot(action.sprite.x, action.sprite.y, 1, 0)
+					@updated_count += 1
+				end
+				
+				@onetime_actions.select { |action| !action.playing? and action.started?(current_time) }.each do |action|
+					action.play
 				end
 			end
 			
@@ -255,7 +269,7 @@ module Rubygame
 			# Start following action after the last one finishes
 			#
 			# Example:
-			# @movie.between(0,1000).move(@stone, :from => [0,0], :to [0,400]).after.play_sound(@crash)
+			# @movie.between(0,1).move(@stone, :from => [0,0], :to => [0,400]).after.play_sound(@crash)
 			#
 			def after
 				@start_at = @stop_at
@@ -267,7 +281,7 @@ module Rubygame
 			#
 			# Example:
 			#
-			# @movie.at(1000).play_sound(@drip).delay(100).play_sound(@drip, {:volume => 0.5}).delay(100).play_sound(@drip, {:volume => 0.2})
+			# @movie.at(1).play_sound(@drip).delay(0.1).play_sound(@drip, {:volume => 0.5}).delay(0.1).play_sound(@drip, {:volume => 0.2})
 			#
 			def delay(time)
 				@start_at = @stop_at||@start_at + time

@@ -22,4 +22,4 @@ movie = Movie.new(:screen => @screen, :background => Color[:black])
 @ttf_sprites.each_with_index do |sprite, index|
 	movie.between(index, index+1).zoom(sprite, :scale_from => 5, :scale_to => 0.1).after.play_sound(Sound["hit.wav"])
 end
-movie.play(6)
+movie.play(:stop_at => 6)

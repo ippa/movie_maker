@@ -29,14 +29,14 @@ module Rubygame
 			end
 						
 			# Actually blit the sprite onto the screen
-			def draw
-				@sprite.image.blit(@screen, @sprite.rect)
-			end
+			#def draw
+			#	@sprite.image.blit(@screen, @sprite.rect)
+			#end
 			
 			# undraw the sprite by blitting the background over it
-			def undraw
-				@background.blit(@screen, @sprite.rect, @sprite.rect)
-			end
+			#def undraw
+			#	@background.blit(@screen, @sprite.rect, @sprite.rect)
+			#end
 			
 			def started?(current_time)
 				current_time > self.start_at
@@ -144,7 +144,7 @@ module Rubygame
 			
 			def update(time)
 				time -= self.start_at
-				@sprite.image = @image.rotozoom_cached(@angle_total, [1,1], true, @sprite.file)	if @direction == :counterclockwise
+				@sprite.image = @image.rotozoom_cached(@angle_total, [1,1], true, @sprite.file)		if @direction == :counterclockwise
 				@sprite.image = @image.rotozoom_cached(-@angle_total, [1,1], true, @sprite.file)	if @direction == :clockwise
 				@angle_total = @angle_step * time
 				@sprite.realign_center			

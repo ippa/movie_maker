@@ -18,4 +18,4 @@ movie = Movie.new(:screen => @screen, :background => @background)
 # Monsterline that demonstrates moviemakes chaining
 #
 movie.between(0, 2).move(@axe, :from => [0,200], :to => [700,350]).rotate(@axe, :angle => 370*2, :direction => :clockwise).after.play_sound(@chop)
-movie.play(4)
+movie.play(:stop_at => 4)
