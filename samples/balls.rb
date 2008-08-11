@@ -3,6 +3,7 @@ require File.join("..", "rubygame_movie_maker")
 
 include Rubygame
 include MovieMaker
+include MovieMaker::Rubygame
 
 Rubygame.init()
 Surface.autoload_dirs = [ "media" ]

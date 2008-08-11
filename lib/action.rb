@@ -3,8 +3,8 @@
 # Or to show a sprite, rotate, zoom or hide etc
 #
 #
-module Rubygame
-	module MovieMaker
+module MovieMaker
+	#module Action
 		#
 		# All actions inherit from this base-class and Should call super in their initialize.
 		# Takes an option-hash: 
@@ -244,5 +244,5 @@ module Rubygame
 			
 		end
 		
-	end
+	#end
 end

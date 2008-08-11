@@ -1,12 +1,12 @@
-module Rubygame
-	module MovieMaker
+module MovieMaker
+	module Rubygame
 	
 		#
 		# A basic spriteclass using rubygames Sprites::Sprite
 		# Autoloads a surface and initializes @rect
 		#
 		class Sprite
-			include Sprites::Sprite
+			include ::Rubygame::Sprites::Sprite
 			
 			attr_reader :image, :file
 			attr_accessor :rect
@@ -39,7 +39,7 @@ module Rubygame
 		# Use this if you wanna move,rotate and zoom texts/letters
 		#
 		class TTFSprite
-			include Sprites::Sprite
+			include ::Rubygame::Sprites::Sprite
 			
 			attr_reader :image
 			attr_accessor :rect
@@ -78,4 +78,59 @@ module Rubygame
 			
 		end		
 	end
+	
+	module Gosu
+	
+		#
+		# A basic spriteclass using rubygames Sprites::Sprite
+		# Autoloads a surface and initializes @rect
+		#
+		class Sprite			
+			attr_reader :image, :file
+			attr_accessor :x, :y
+			def initialize(file, x=0, y=0)
+				super()
+				@file = file
+				@image = Surface.autoload(file)
+			end
+			
+			# Only relevant with rubygame
+			def realign_center
+				nil
+			end
+			
+		end
+		
+		#
+		# Use this if you wanna move,rotate and zoom texts/letters
+		#
+		class TTFSprite
+			attr_reader :image
+			attr_accessor :x, :y
+			def initialize(string, options={})
+				super()
+				@string = string
+				@color = options[:color] || Color[:black]
+				@size = options[:size] || 15
+				@position = options[:position] || [0,0]
+				@fontname = options[:fontname] || "FreeSans.ttf"
+				@font = options[:font] || nil
+				
+				if @font.nil?
+					@font = TTF.new(File.join("fonts", @fontname), @size)
+				end
+				
+				#@rect = Rect.new(@position[0], @position[1], *@font.size_text(string))
+				#@image = Surface.new(@rect.size, 0, [SRCCOLORKEY])
+				#@font.render(@string, true, @color).blit(@image,[0,0])
+			end
+
+			# Only relevant with rubygame
+			def realign_center
+				nil
+			end
+			
+		end		
+	end
+
 end
