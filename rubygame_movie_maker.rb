@@ -44,7 +44,6 @@ module Rubygame
 					
 				@actions = []
 				@onetime_actions = []
-				@sprites = {}
 				@tick = @start_at = @stop_at = 0
 			end
 			
@@ -158,23 +157,6 @@ module Rubygame
 			def pause
 			end
 			
-			#
-			# Fix this to behave like a shortcut to between() or at()?
-			#
-			def []=(start_at, stop_at, action=nil)
-				resource_name = start_at
-				resource = stop_at
-				if resource_name.is_a? Symbol
-					@sprites[resource_name] = resource								if resource.is_a? Sprite
-					@sprites[resource_name] = Sprite.new(resource)		if resource.is_a? String
-				end
-			end
-
-			def [](resource_name)
-				@sprites[resource_name.to_sym]
-			end
-	
-						
 			def add_action(action)
 				@actions << action
 			end
