@@ -10,15 +10,18 @@ class GameWindow < Gosu::MovieMakerWindow
 	
 	def setup_movie
 		@movie = Movie.new(:framework => :gosu, :screen => $screen)
-		(1..100).each do |nr|
+		
+		start_at = stop_at = 0
+		(1..500).each do |nr|
 			x = rand(800)
-			start_at = nr / 20.0
-			stop_at = nr / 20.0 + 1
+			start_at = nr / 50.0
+			stop_at = nr / 50.0 + 1.0
 	
-			@movie.between(start_at, stop_at).move(Sprite.new("raindrop.png"), :from => [x,0], :to => [x,650])
+			@raindrop = Sprite.new("raindrop_small.png")
+			@movie.between(start_at, stop_at).move_facing_direction(@raindrop, :from => [x,0], :to => [x+100+(nr/5)+rand(50),650])
 		end
+		#@movie.between(0, stop_at).play_sound(Sound["rain2.wav"])
 	end
-	
 end
 
 if $0 == __FILE__

@@ -129,7 +129,30 @@ module MovieMaker
 			# Only undraw/update actions that are active on the timeline
 			@actions.select { |action| action.playing?(current_time) }.each do |action|
 				dirty_rects << @background.blit(@screen, action.sprite.rect, action.sprite.rect) 
-				action.update(current_time)	
+				
+				action.update(current_time)
+				
+				#
+				# Rotozoom lies here because of 2 reasons:
+				# - Action can't do the actual imagemanipulation since Gosu does it drawtime
+				# - By moving it out of the action, we can have more then 1 action manipulting rotozoom parameeters
+				#
+				if action.sprite.angle != 0 || action.sprite.width_scaling != 1 || action.sprite.height_scaling != 1
+					
+					#
+					# Disable rotozoom_cached until further notice
+					#
+					#action.sprite.image = action.image.rotozoom_cached(action.sprite.angle, 
+					#																									[action.sprite.width_scaling, action.sprite.height_scaling],
+					#																									true, action.sprite.file)
+					
+					action.sprite.image = action.image.rotozoom(	action.sprite.angle, 
+																												[action.sprite.width_scaling, action.sprite.height_scaling],
+																												true)
+
+					action.sprite.realign_center
+				end
+
 				@updated_count += 1
 			end
 				
@@ -165,7 +188,14 @@ module MovieMaker
 		def gosu_draw(current_time)
 			@background.draw(0, 0, 0)	if	@background
 			@actions.select { |action| action.started?(current_time) }.each do |action|
-				action.sprite.image.draw_rot(action.sprite.x, action.sprite.y, 1, 0, 0.5, 0.5, 1, 1, 0xffffffff, :additive)
+				action.sprite.image.draw_rot(	action.sprite.x, 
+																			action.sprite.y, 
+																			1, 
+																			action.sprite.angle, 0.5, 0.5, 
+																			action.sprite.width_scaling, 
+																			action.sprite.height_scaling, 
+																			0xffffffff, 
+																			:additive)
 			end
 		end
 			

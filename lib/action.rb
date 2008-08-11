@@ -18,7 +18,7 @@ module MovieMaker
 		#
 		class SpriteAction
 			attr_accessor :sprite, :background, :screen
-			attr_reader :start_at, :stop_at
+			attr_reader :start_at, :stop_at, :image
 			def initialize(options = {})
 				@sprite = options[:object]
 				@background = options[:background]
@@ -26,6 +26,7 @@ module MovieMaker
 				@start_at = (options[:start_at]||0) * 1000
 				@stop_at = (options[:stop_at]||0) * 1000
 				@duration = @stop_at - @start_at
+				@image = @sprite.image
 			end
 			
 			def started?(current_time)
@@ -85,16 +86,13 @@ module MovieMaker
 				@to_x = @to[0]
 				@to_y = @to[1]
 				
-				@image = @sprite.image
 				setup
 			end
 			
 			def setup
 				@x_step = (@to_x - @from_x).to_f / @duration.to_f
 				@y_step = (@to_y - @from_y).to_f / @duration.to_f				
-				@angle = 360 - (Math.atan(@y_step / @x_step) * 180.0/Math::PI) + 90
-				@sprite.image = @image.rotozoom(@angle, [1,1], true)
-				@sprite.realign_center
+				@sprite.angle = 360 - (Math.atan(@y_step / @x_step) * 180.0/Math::PI) + 90
 			end
 			
 			# The core of the MoveClass, the actual move-logic
@@ -108,35 +106,33 @@ module MovieMaker
 
 		# Rotate a sprite
 		class Rotate < SpriteAction
+			attr_reader :direction
 			def initialize(options = {})
 				super
-				@angle = options[:angle]
+				@to_angle = options[:angle]
 				@direction = options[:direction] || :clockwise
-				@cache = options[:cache] || false
-				@image = @sprite.image
+				#@cache = options[:cache] || false
+				
 				setup
 			end
 			
 			def setup
-				@angle_step = @angle.to_f / @duration.to_f
-				@angle_total = 0
+				@angle_step = @to_angle.to_f / @duration.to_f
 				
 				#
 				# Fill the cache with all angles
 				#
-				if @cache
-					(0..360).each do |angle|
-						@image.rotozoom_cached(angle, [1,1], true, @sprite.file)
-					end
-				end
+				#if @cache
+				#	(0..360).each do |angle|
+				#		@image.rotozoom_cached(angle, [1,1], true, @sprite.file)
+				#	end
+				#end
 			end
 			
 			def update(time)
 				time -= self.start_at
-				@sprite.image = @image.rotozoom_cached(@angle_total, [1,1], true, @sprite.file)		if @direction == :counterclockwise
-				@sprite.image = @image.rotozoom_cached(-@angle_total, [1,1], true, @sprite.file)	if @direction == :clockwise
-				@angle_total = @angle_step * time
-				@sprite.realign_center			
+				@sprite.angle = (@angle_step * time)	if @direction == :counterclockwise
+				@sprite.angle = (-@angle_step * time)	if @direction == :clockwise				
 			end
 			
 		end
@@ -146,25 +142,23 @@ module MovieMaker
 			
 			def initialize(options = {})
 				super
-				@scale_from = options[:scale_from]
-				@scale_to = options[:scale_to]
-				@image = @sprite.image
-				@scale = ((@scale_from||1) - (@scale_to||2)).abs
+				@scale_from = options[:scale_from] || 1
+				@scale_to = options[:scale_to] || 2
+				@scale = (@scale_from - @scale_to).abs
 				setup
 			end
 			
 			def setup
 				@scale_step = @scale.to_f / @duration.to_f
-				@scale_step = -@scale_step if	@scale_to < @scale_from
-				
+				@scale_step = -@scale_step 	if	@scale_to < @scale_from
 				@scale_total = @scale_from
 			end
 			
 			def update(time)
 				time -= self.start_at
-				@sprite.image = @image.rotozoom(0, [@scale_total, @scale_total], true)
-				@scale_total = @scale_from + @scale_step * time
-				@sprite.realign_center				
+				scale = @scale_from + @scale_step * time
+				@sprite.width_scaling = scale
+				@sprite.height_scaling = scale
 			end
 			
 		end
