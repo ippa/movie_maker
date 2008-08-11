@@ -1,9 +1,9 @@
 = rubygame_movie_maker README
 
 == What is it?
-A class to make automate spritemovement / effects / sound over a timeline.
-Rubygame solves all the heavy lifting for us when it comes to drawing on the screen.
-movie_maker adds makes timing and setup of a scene esay. 
+A rubylibrary to automate sprite movement/effects and sound over a timeline.
+Either Rubygame (SDL) or Gosu (OpenGL) does the heavy lifting for us when it comes to drawing on the screen.
+MovieMaker transparently supports both gamelibraries.
 
 Use it for intros, ingame animations and simple "demos". Namingconventions tries to follow Rubygame.
 
@@ -47,7 +47,8 @@ movie_maker supports various chaining of actions, we could for example modify ou
 
 
 == Requirements
-Rubygame 2.3+
+Rubygame 2.3+ or Gosu 0.7.9+
+
 
 == License
 
