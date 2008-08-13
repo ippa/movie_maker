@@ -25,7 +25,7 @@ class Sample
 		(path = find_file(name)) ? Gosu::Sample.new($screen, path) : nil
 	end
 end
-Sound = Image
+Sound = Sample
 
 class Tile
 	include Rubygame::NamedResource

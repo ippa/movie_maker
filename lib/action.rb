@@ -13,8 +13,7 @@ module MovieMaker
 		# :sprite - the actuall spriteobject, needs to answer to x,x=,y,y= and image
 		# :screen - the screenobject, so it knows where to blit itself
 		# :background - the backgroundsurface so it can undraw itself properly
-		# 
-		# Provides 2 basic methods: draw and undraw
+		#
 		#
 		class SpriteAction
 			attr_accessor :sprite, :background, :screen
@@ -104,7 +103,9 @@ module MovieMaker
 			
 		end
 
-		# Rotate a sprite
+		#
+		# ROTATE
+		#
 		class Rotate < SpriteAction
 			attr_reader :direction
 			def initialize(options = {})
@@ -136,7 +137,31 @@ module MovieMaker
 			end
 			
 		end
-		
+
+		#
+		# PULSATE
+		#
+		class Pulsate < SpriteAction
+			attr_reader :direction
+			def initialize(options = {})
+				super
+				@pulse_duration = options[:duration]
+				@times = options[:times] || 1		
+				setup
+			end
+			
+			def setup
+				@angle_step = @to_angle.to_f / @duration.to_f
+			end
+			
+			def update(time)
+				time -= self.start_at
+				@sprite.angle = (@angle_step * time)	if @direction == :counterclockwise
+				@sprite.angle = (-@angle_step * time)	if @direction == :clockwise				
+			end
+			
+		end
+
 		# Zoom a sprite
 		class Zoom < SpriteAction
 			
@@ -205,7 +230,7 @@ module MovieMaker
 
 		#
 		# Plays a sound
-		#
+		# 
 		class PlaySound < SimpleAction
 			attr_reader :playing
 			def initialize(options = {})

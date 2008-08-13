@@ -239,8 +239,12 @@ module MovieMaker
 		def method_missing(method, *arg)
 			klass = Kernel.const_get(camelize(method))
 			
-			object	= arg.first
-			object = self[arg.first]	if arg.first.is_a? Symbol
+			#unless arg.is_a? Hash
+				object	= arg.first
+				object = self[arg.first]	if arg.first.is_a? Symbol
+			#end
+			
+			#p object.inspect
 			
 			default_options = { :start_at => @start_at, 
 													:stop_at => @stop_at,
@@ -270,7 +274,8 @@ module MovieMaker
 		#
 		# Bellow are methods to time actions and make them chainable
 		#
-			
+		
+		
 		#
 		# Start following action start_at millisecs into the movie
 		# .. and stop it stop_at millisecs into the movie.
@@ -325,6 +330,16 @@ module MovieMaker
 			@start_at = @stop_at||@start_at + time
 			self
 		end
+		
+		#
+		# Sprite/Sound/Resource selection
+		#
+		def resource(resource)
+			@resource = resource
+			self
+		end
+		alias :sprite :resource
+		alias :sound :resource
 
 	end
 end
@@ -351,8 +366,15 @@ if $0 == __FILE__
 	
 	(0..5).each do |nr|
 		@spaceship = Sprite.new("spaceship_noalpha.png")
-		movie.between(0, 4).move(@spaceship, :from => [0,rand(300)], :to => [400+rand(300),rand(350)])
-		movie.between(0, 4).rotate(@spaceship, :angle => 360, :direction => :clockwise, :cache => true)
+
+		## New style!
+		movie.resource(@spaceship).between(0, 4).move([400+rand(300),rand(350)]).rotate(360)
+
+		#movie.between(0, 4).move(@spaceship, [400+rand(300),rand(350)])
+		#movie.between(0, 4).rotate_cw(@spaceship, 360,  :cache => true)
+		
+		#movie.between(0, 4).move(@spaceship, :from => [0,rand(300)], :to => [400+rand(300),rand(350)])
+		#movie.between(0, 4).rotate(@spaceship, :angle => 360, :direction => :clockwise, :cache => true)
 	end
 	movie.play
 end
