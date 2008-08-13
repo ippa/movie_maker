@@ -252,7 +252,8 @@ module MovieMaker
 				@repeats = options[:repeats] || 1
 				@fade_in = options[:fade_in] || nil
 				@stop_after = @duration				
-				@sound.volume = @volume
+				
+				@sound.volume = @volume	if @sound.respond_to? :volume
 			end
 			
 			def started?(current_time)

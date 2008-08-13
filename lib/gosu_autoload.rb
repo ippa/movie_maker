@@ -8,12 +8,13 @@ begin
 rescue
 	require 'rubygame'
 end
+include Gosu
 
 class Image
 	include Rubygame::NamedResource
 	
 	def self.autoload(name)
-		(path = find_file(name)) ? Gosu::Image.new($screen, path, true) : nil
+		(path = find_file(name)) ? Image.new($screen, path, true) : nil
 	end
 end
 Surface = Image
@@ -21,8 +22,9 @@ Surface = Image
 class Sample
 	include Rubygame::NamedResource
 	
+	
 	def self.autoload(name)
-		(path = find_file(name)) ? Gosu::Sample.new($screen, path) : nil
+		(path = find_file(name)) ? Sample.new($screen, path) : nil
 	end
 end
 Sound = Sample
@@ -31,6 +33,6 @@ class Tile
 	include Rubygame::NamedResource
 	
 	def self.autoload(name)
-		(path = find_file(name)) ? Gosu::Image.load_tiles($screen, path, 32, 32, true) : nil
+		(path = find_file(name)) ? Image.load_tiles($screen, path, 32, 32, true) : nil
 	end
 end

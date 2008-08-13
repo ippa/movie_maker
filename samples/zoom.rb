@@ -21,7 +21,7 @@ end
 movie = Movie.new(:screen => @screen, :background => Color[:black])
 
 @ttf_sprites.each_with_index do |sprite, index|
-	#movie.between(index, index+1).zoom(sprite, :scale_from => 5, :scale_to => 0.1).rotate(sprite, :angle => 360).then.play_sound(Sound["hit.wav"])
-	movie.resource(sprite).at(index).zoom(3).between(index, index+1).zoom(0.1).rotate(360).then.play_sound(Sound["hit.wav"])
+	# OLD: movie.between(index, index+1).zoom(sprite, :scale_from => 5, :scale_to => 0.1).rotate(sprite, :angle => 360).then.play_sound(Sound["hit.wav"])
+	movie.resource(sprite).at(index).zoom(5).between(index, index+1).zoom(0.6).rotate(360).then.play_sound(Sound["hit.wav"])
 end
 movie.play(:stop_at => 6)

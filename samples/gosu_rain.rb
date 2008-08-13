@@ -20,7 +20,7 @@ class GameWindow < Gosu::MovieMakerWindow
 			@raindrop = Sprite.new("raindrop_small.png")
 			@movie.resource(@raindrop).move([x,0]).between(start_at, stop_at).move_facing_direction([x+100+(nr/5)+rand(50),650])
 		end
-		#@movie.between(0, stop_at).play_sound(Sound["rain2.wav"])
+		@movie.at(0).play_sound(Sample["rain2.wav"])
 	end
 end
 
