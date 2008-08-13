@@ -25,6 +25,7 @@ module MovieMaker
 				@start_at = (options[:start_at]||0) * 1000
 				@stop_at = (options[:stop_at]||0) * 1000
 				@cache = options[:cache] || false
+				@framework = options[:framework] || :rubygame
 				
 				@duration = @stop_at - @start_at
 				@playing = true
@@ -98,7 +99,13 @@ module MovieMaker
 
 				@x_step = (@to_x - @from_x).to_f / @duration.to_f
 				@y_step = (@to_y - @from_y).to_f / @duration.to_f				
-				@sprite.angle = 360 - (Math.atan(@y_step / @x_step) * 180.0/Math::PI) + 90
+				
+				#
+				# investigate this further later ...
+				#
+				@sprite.angle = (Math.atan(@y_step / @x_step) * 180.0/Math::PI) + 315
+				@sprite.angle -= 45		if @framework == :gosu
+				
 				@setup_done = true
 			end
 			

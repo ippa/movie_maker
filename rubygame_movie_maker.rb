@@ -246,7 +246,8 @@ module MovieMaker
 									:stop_at => @stop_at,
 									:screen => @screen,
 									:background => @background,
-									:object => @resource
+									:object => @resource,
+									:framework => @framework || :rubygame
 								}
 												
 			standard_args = []
