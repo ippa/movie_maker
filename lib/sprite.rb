@@ -17,7 +17,8 @@ module MovieMaker
 				@rect = Rect.new(x,y,*@image.size)
 				@image.set_colorkey(@image.get_at(0,0))
 				@angle = 0.0
-				@width_scaling = @height_scaling = 1.0
+				@width_scaling = 1.0
+				@height_scaling = 1.0
 			end
 			
 			#
@@ -64,7 +65,8 @@ module MovieMaker
 				@image.set_colorkey(@image.get_at(0,0))
 				
 				@angle = 0.0
-				@width_scaling = @height_scaling = 1.0
+				@width_scaling = 1.0
+				@height_scaling = 1.0
 			end
 
 			#
@@ -98,7 +100,8 @@ module MovieMaker
 				@x, @y = x, y
 				@image = Surface.autoload(@file)
 				@angle = 0.0
-				@width_scaling = @height_scaling = 1.0
+				@width_scaling = 1.0
+				@height_scaling = 1.0
 			end
 			
 			# Only relevant with rubygame
@@ -130,7 +133,8 @@ module MovieMaker
 				end
 				
 				@angle = 0.0
-				@width_scaling = @height_scaling = 1.0
+				@width_scaling = 1.0
+				@height_scaling = 1.0
 				#@rect = Rect.new(@position[0], @position[1], *@font.size_text(string))
 				#@image = Surface.new(@rect.size, 0, [SRCCOLORKEY])
 				#@font.render(@string, true, @color).blit(@image,[0,0])

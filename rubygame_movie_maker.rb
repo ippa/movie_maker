@@ -49,6 +49,7 @@ module MovieMaker
 				
 			@actions = []
 			@onetime_actions = []
+			@update_actions = []
 			@tick = @start_at = @stop_at = 0
 		end
 			
@@ -71,7 +72,12 @@ module MovieMaker
 		def play(options = {})
 			@framework ||= options[:framework] || :rubygame    							# this can also be :gosu
 			@movie_stop_at ||= options[:stop_at] ? options[:stop_at] * 1000.0 : stop_at
-											
+			
+			# Convert all start_at's filled with :now to current timestamp (meaning they'll start .. "now")
+			@actions.each do |action|
+				action.start_at = @clock.lifetime	if action.start_at.is_a? Symbol and action.start_at == :now
+			end
+			
 			setup
 				
 			while @clock.lifetime < @movie_stop_at
@@ -124,13 +130,18 @@ module MovieMaker
 		#
 		def rubygame_update(current_time)
 			@updated_count = 0
-			dirty_rects = []
 
+			#@onetime_actions.select { |action| !action.playing?(current_time) and action.started?(current_time) }.each do |action|
+			@onetime_actions.select { |action| action.started?(current_time) and !action.finalized?}.each do |action|
+				action.finalize
+			end
+			
+			dirty_rects = []
 			# Only undraw/update actions that are active on the timeline
-			@actions.select { |action| action.playing?(current_time) }.each do |action|
+			@update_actions.select { |action| action.playing?(current_time) }.each do |action|
 				dirty_rects << @background.blit(@screen, action.sprite.rect, action.sprite.rect) 
-				
 				action.update(current_time)
+				@updated_count += 1
 				
 				#
 				# Rotozoom lies here because of 2 reasons:
@@ -139,32 +150,18 @@ module MovieMaker
 				#
 				if action.sprite.angle != 0 || action.sprite.width_scaling != 1 || action.sprite.height_scaling != 1
 					
-					#
-					# Disable rotozoom_cached until further notice
-					#
-					#action.sprite.image = action.image.rotozoom_cached(action.sprite.angle, 
-					#																									[action.sprite.width_scaling, action.sprite.height_scaling],
-					#																									true, action.sprite.file)
-					
 					action.sprite.image = action.image.rotozoom(	action.sprite.angle, 
 																												[action.sprite.width_scaling, action.sprite.height_scaling],
 																												true)
-
 					action.sprite.realign_center
 				end
-
-				@updated_count += 1
 			end
 				
-			@actions.select { |action| action.started?(current_time) }.each do |action|
+			@update_actions.select { |action| action.started?(current_time) }.each do |action|
 				dirty_rects << action.sprite.image.blit(@screen, action.sprite.rect)
 			end
 				
 			@screen.update_rects(dirty_rects)
-				
-			@onetime_actions.select { |action| !action.playing? and action.started?(current_time) }.each do |action|
-				action.play
-			end
 		end
 			
 		#
@@ -172,29 +169,33 @@ module MovieMaker
 		#
 		def gosu_update(current_time)
 			@updated_count = 0
+
+			@onetime_actions.select { |action| action.started?(current_time) and !action.finalized? }.each do |action|
+				#puts "onetime action: #{action.start_at} - #{action.stop_at}" + action.class.to_s
+		
+				action.finalize
+			end
 				
-			@actions.select { |action| action.started?(current_time) }.each do |action|
+			@update_actions.select { |action| action.started?(current_time) }.each do |action|
+				#puts "update: #{action.start_at} - #{action.stop_at}" + action.class.to_s
 				action.update(current_time)	
 				@updated_count += 1
 			end
 				
-			@onetime_actions.select { |action| !action.playing? and action.started?(current_time) }.each do |action|
-				action.play
-			end
 		end
 		#
 		# gosu_update - GOSU specific updateloop
 		#
 		def gosu_draw(current_time)
 			@background.draw(0, 0, 0)	if	@background
-			@actions.select { |action| action.started?(current_time) }.each do |action|
+			@update_actions.select { |action| action.started?(current_time) }.each do |action|
 				action.sprite.image.draw_rot(	action.sprite.x, 
 																			action.sprite.y, 
 																			1, 
 																			action.sprite.angle, 0.5, 0.5, 
 																			action.sprite.width_scaling, 
 																			action.sprite.height_scaling, 
-																			0xffffffff, 
+																			0xffffffff,
 																			:additive)
 			end
 		end
@@ -236,36 +237,42 @@ module MovieMaker
 		#
 		# Ex. movie.between(0,2000).move(:ball, :from => [100,100], :to => [500,100])
 		#
-		def method_missing(method, *arg)
+		def method_missing(method, *args)
+			
+			## .move ==> Move.new (the class)
 			klass = Kernel.const_get(camelize(method))
 			
-			#unless arg.is_a? Hash
-				object	= arg.first
-				object = self[arg.first]	if arg.first.is_a? Symbol
-			#end
+			options = { :start_at => @start_at, 
+									:stop_at => @stop_at,
+									:screen => @screen,
+									:background => @background,
+									:object => @resource
+								}
+												
+			standard_args = []
+			args.each do |arg|
+				if arg.is_a? Hash
+					options.merge!(arg)
+				else
+					standard_args << arg
+				end
+			end
 			
-			#p object.inspect
 			
-			default_options = { :start_at => @start_at, 
-													:stop_at => @stop_at,
-													:screen => @screen,
-													:background => @background,
-													:object => object
-												}
-			options = arg[1] || {}
-			options = default_options.merge(options)
-			action = klass.new(options)
-							
+			action = klass.new(options, *standard_args)
+			#puts "ACTION: #{action.class} - #{standard_args}"
+			
+			@actions << action
 			#
 			# Separate actions that needs 1-time trigger
 			#
-			if object.kind_of? Sound		
+			if @resource.kind_of? Sound or @stop_at == @start_at
 				@onetime_actions << action
 			#
 			# And thoose who needs constant update/drawing
 			#
 			else
-				@actions << action
+				@update_actions << action
 			end
 			 
 			self
@@ -294,7 +301,7 @@ module MovieMaker
 		#
 		def at(start_at)
 			@start_at = start_at
-			@stop_at = nil
+			@stop_at = start_at
 			self
 		end
 
@@ -302,8 +309,13 @@ module MovieMaker
 		# Start following action right away and specify how long is should run
 		#
 		def during(length)
-			@start_at = @clock.lifetime	## this probably needs to be set when the movie Starts.
-			@stop_at = length
+			if @stop_at==0
+				@start_at = :now
+			else
+				@start_at = @stop_at
+			end
+			
+			@stop_at = @stop_at + length
 			self
 		end
 			
@@ -311,13 +323,12 @@ module MovieMaker
 		# Start following action after the last one finishes
 		#
 		# Example:
-		# @movie.between(0,1).move(@stone, :from => [0,0], :to => [0,400]).after.play_sound(@crash)
+		# @movie.between(0,1).move(@stone, :from => [0,0], :to => [0,400]).then.play_sound(@crash)
 		#
-		def after
+		def then
 			@start_at = @stop_at
 			self
 		end
-		alias :then :after 
 			
 		#
 		# Start following action after the last one finishes + a millisecs delay argument
@@ -336,6 +347,8 @@ module MovieMaker
 		#
 		def resource(resource)
 			@resource = resource
+			@start_at = 0
+			@stop_at = 0
 			self
 		end
 		alias :sprite :resource
@@ -364,17 +377,12 @@ if $0 == __FILE__
 										:background => @background,
 										:target_framerate => 200)
 	
-	(0..5).each do |nr|
+	(0..2).each do |nr|
 		@spaceship = Sprite.new("spaceship_noalpha.png")
 
 		## New style!
-		movie.resource(@spaceship).between(0, 4).move([400+rand(300),rand(350)]).rotate(360)
-
-		#movie.between(0, 4).move(@spaceship, [400+rand(300),rand(350)])
-		#movie.between(0, 4).rotate_cw(@spaceship, 360,  :cache => true)
+		movie.resource(@spaceship).between(0,4).move([400+rand(300),rand(350)]).rotate(360).then.play_sound(Sound["hit.wav"])
 		
-		#movie.between(0, 4).move(@spaceship, :from => [0,rand(300)], :to => [400+rand(300),rand(350)])
-		#movie.between(0, 4).rotate(@spaceship, :angle => 360, :direction => :clockwise, :cache => true)
 	end
-	movie.play
+	movie.play(:stop_at => 5)
 end

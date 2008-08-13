@@ -18,14 +18,23 @@ module MovieMaker
 		class SpriteAction
 			attr_accessor :sprite, :background, :screen
 			attr_reader :start_at, :stop_at, :image
-			def initialize(options = {})
+			def initialize(options = {}, *ignore)
 				@sprite = options[:object]
 				@background = options[:background]
 				@screen = options[:screen]
 				@start_at = (options[:start_at]||0) * 1000
 				@stop_at = (options[:stop_at]||0) * 1000
+				@cache = options[:cache] || false
+				
 				@duration = @stop_at - @start_at
-				@image = @sprite.image
+				@playing = true
+				@finalized = false
+				@setup_done = false
+				@image = @sprite.image # used in MovieMaker#play
+			end
+			
+			def finalized?
+				@finalized
 			end
 			
 			def started?(current_time)
@@ -33,40 +42,41 @@ module MovieMaker
 			end
 
 			def playing?(current_time)
-				(current_time >= self.start_at) && (current_time < self.stop_at)
+				@playing and (current_time >= self.start_at) and (current_time < self.stop_at)
 			end
 		end
 		
 		#
-		# Moves a sprite from X,Y --> X2,Y2
+		# Moves a sprite to a set of coordinates
 		#
 		class Move < SpriteAction
 		
-			def initialize(options = {})
-				super
-				@from = options[:from]
-				@to = options[:to]
-				@from_x = @from[0]
-				@from_y = @from[1]
-				@to_x = @to[0]
-				@to_y = @to[1]
-				
-				@sprite.x = @from_x
-				@sprite.y = @from_y
-				
-				setup
+			def initialize(options = {}, coordinates = [0,0])
+				super(options)
+				@to_x = coordinates[0]
+				@to_y = coordinates[1]
 			end
 			
 			def setup
+				@from_x = @sprite.x
+				@from_y = @sprite.y
 				@x_step = (@to_x - @from_x).to_f / @duration.to_f
-				@y_step = (@to_y - @from_y).to_f / @duration.to_f				
+				@y_step = (@to_y - @from_y).to_f / @duration.to_f
+				@setup_done = true
 			end
 			
 			# The core of the MoveClass, the actual move-logic
 			def update(time)
+				setup	unless @setup_done
 				time -=  self.start_at
 				@sprite.x = @from_x + time * @x_step
 				@sprite.y = @from_y + time * @y_step
+			end
+			
+			def finalize
+				@sprite.x = @to_x
+				@sprite.y = @to_y
+				@finalized = true
 			end
 			
 		end
@@ -76,29 +86,33 @@ module MovieMaker
 		#
 		class MoveFacingDirection < SpriteAction
 		
-			def initialize(options = {})
-				super
-				@from = options[:from]
-				@to = options[:to]
-				@from_x = @from[0]
-				@from_y = @from[1]
-				@to_x = @to[0]
-				@to_y = @to[1]
-				
-				setup
+			def initialize(options = {}, coordinates = [0,0])
+				super(options)
+				@to_x = coordinates[0]
+				@to_y = coordinates[1]
 			end
 			
 			def setup
+				@from_x = @sprite.x
+				@from_y = @sprite.y
+
 				@x_step = (@to_x - @from_x).to_f / @duration.to_f
 				@y_step = (@to_y - @from_y).to_f / @duration.to_f				
 				@sprite.angle = 360 - (Math.atan(@y_step / @x_step) * 180.0/Math::PI) + 90
+				@setup_done = true
 			end
 			
 			# The core of the MoveClass, the actual move-logic
 			def update(time)
 				time -=  self.start_at
+				setup	unless @setup_done
+				
 				@sprite.x = @from_x + time * @x_step
 				@sprite.y = @from_y + time * @y_step
+			end
+			
+			def finalize
+				@finalized = true
 			end
 			
 		end
@@ -108,34 +122,26 @@ module MovieMaker
 		#
 		class Rotate < SpriteAction
 			attr_reader :direction
-			def initialize(options = {})
-				super
-				@to_angle = options[:angle]
-				@direction = options[:direction] || :clockwise
-				#@cache = options[:cache] || false
-				
-				setup
+			def initialize(options = {}, angle = 360)
+				super(options)
+				@angle = angle
 			end
 			
 			def setup
-				@angle_step = @to_angle.to_f / @duration.to_f
-				
-				#
-				# Fill the cache with all angles
-				#
-				#if @cache
-				#	(0..360).each do |angle|
-				#		@image.rotozoom_cached(angle, [1,1], true, @sprite.file)
-				#	end
-				#end
+				@angle_step = @angle.to_f / @duration.to_f
+				@setup_done = true
 			end
 			
 			def update(time)
 				time -= self.start_at
-				@sprite.angle = (@angle_step * time)	if @direction == :counterclockwise
-				@sprite.angle = (-@angle_step * time)	if @direction == :clockwise				
+				setup	unless @setup_done
+				@sprite.angle = -(@angle_step * time)
 			end
 			
+			def finalize
+				@sprite.angle = @angle
+				@finalized = true
+			end
 		end
 
 		#
@@ -144,20 +150,18 @@ module MovieMaker
 		class Pulsate < SpriteAction
 			attr_reader :direction
 			def initialize(options = {})
-				super
-				@pulse_duration = options[:duration]
+				super(options)
+				@pulse_duration = options[:duration] || 1
 				@times = options[:times] || 1		
-				setup
 			end
 			
 			def setup
-				@angle_step = @to_angle.to_f / @duration.to_f
+				@setup_done = true
 			end
 			
 			def update(time)
 				time -= self.start_at
-				@sprite.angle = (@angle_step * time)	if @direction == :counterclockwise
-				@sprite.angle = (-@angle_step * time)	if @direction == :clockwise				
+				setup	unless @setup_done
 			end
 			
 		end
@@ -165,27 +169,36 @@ module MovieMaker
 		# Zoom a sprite
 		class Zoom < SpriteAction
 			
-			def initialize(options = {})
-				super
-				@scale_from = options[:scale_from] || 1
-				@scale_to = options[:scale_to] || 2
-				@scale = (@scale_from - @scale_to).abs
-				setup
+			def initialize(options = {}, factor = 1)
+				super(options)
+				@factor = factor
 			end
 			
 			def setup
+				@scale_from = @sprite.width_scaling || 1
+				@scale = (@scale_from - @factor).abs
+
 				@scale_step = @scale.to_f / @duration.to_f
-				@scale_step = -@scale_step 	if	@scale_to < @scale_from
-				@scale_total = @scale_from
+				@scale_step = -@scale_step 	if	@factor < @scale_from
+		
+				@setup_done = true
 			end
 			
 			def update(time)
 				time -= self.start_at
+				setup	unless @setup_done
+	
 				scale = @scale_from + @scale_step * time
+				#puts "#{scale} = #{@scale_from} + #{@scale_step} * #{time}"
 				@sprite.width_scaling = scale
 				@sprite.height_scaling = scale
 			end
 			
+			def finalize
+				@sprite.width_scaling = @factor
+				@sprite.height_scaling = @factor
+				@finalized = true
+			end
 		end
 
 
@@ -200,10 +213,10 @@ module MovieMaker
 		end
 
 		# Fades a sprite 
-		class Fade < SpriteAction
+		class FadeTo < SpriteAction
 		
 			def initialize(options = {})
-				super
+				super(options)
 				@from = options[:from]
 				@to = options[:to]
 				@alpha = 255
@@ -214,7 +227,6 @@ module MovieMaker
 				@alpha -= 1	if @alpha > 0
 			end
 		end
-
 
 		#
 		#
@@ -233,28 +245,31 @@ module MovieMaker
 		# 
 		class PlaySound < SimpleAction
 			attr_reader :playing
-			def initialize(options = {})
-				super
-				@sound = options[:object]
+			def initialize(options = {}, sound = nil)			
+				super(options)
+				@sound = sound || options[:object]
 				@volume = options[:volume] || 1.0
 				@repeats = options[:repeats] || 1
 				@fade_in = options[:fade_in] || nil
 				@stop_after = @duration				
 				@sound.volume = @volume
-				@playing = false
 			end
 			
 			def started?(current_time)
 				current_time > self.start_at
 			end
 
-			def playing?
+			def finalized?
+				@finalized
+			end
+
+			def playing?(current_time)
 				@playing
 			end
 						
-			def play
+			def finalize
 				@sound.play
-				@playing = true
+				@finalized = true
 			end
 			
 			def stop

@@ -24,7 +24,7 @@ Sound.autoload_dirs = [ "media" ]
 	fall_time = 2
 	start_at = nr * fall_time
 	stop_at = nr * fall_time + fall_time
-	@movie.between(start_at,stop_at).move(@raindrop, :from => [x, -100], :to => [x, 650])
+	@movie.resource(@raindrop).move([x,-1000]).between(start_at,stop_at).move([x, 650])
 	@movie.at(stop_at).play_sound(@drip.dup).delay(@echo_delay).play_sound(@drip.dup, :volume=>0.6).delay(@echo_delay).play_sound(@drip.dup,:volume => 0.3).delay(@echo_delay).play_sound(@drip.dup,:volume => 0.2)
 end
 @movie.play(:stop_at => 13)

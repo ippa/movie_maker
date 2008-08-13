@@ -19,7 +19,8 @@ start_at = stop_at = 0
 	stop_at = nr / 50.0 + 1.0
 	
 	@raindrop = Sprite.new("raindrop_small.png")
-	movie.between(start_at, stop_at).move_facing_direction(@raindrop, :from => [x,0], :to => [x+100+(nr/5)+rand(50),650])
+	# OLD: movie.between(start_at, stop_at).move_facing_direction(@raindrop, :from => [x,0], :to => [x+100+(nr/5)+rand(50),650])
+	movie.resource(@raindrop).move([x,0]).between(start_at, stop_at).move_facing_direction([x+100+(nr/5)+rand(50),650])
 end
 movie.between(0, stop_at).play_sound(Sound["rain2.wav"])
 movie.play

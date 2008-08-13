@@ -10,18 +10,16 @@ class GameWindow < Gosu::MovieMakerWindow
 	
 	def setup_movie
 		@movie = Movie.new(:framework => :gosu, :screen => $screen)
-		0.upto(20) do |start|
+		0.upto(5) do |start|
+			
 			@red = Sprite.new("red_triangle.png")
 			@green = Sprite.new("green_triangle.png")
 			@blue = Sprite.new("blue_triangle.png")
-			stop = start + 5
-			
-			#@movie.between(start, stop).resource(@red).move(:from => [0,0], :to => [800,650]).rotate(:angle => 1000).zoom(:scale_from => 0.1, :scale_to => 2)
-			#@movie.between(start, stop).resource(@red).move_to([800,650]).rotate(1000).zoom(0.1, 2)
-			
-			@movie.between(start, stop).move(@red, :from => [0,0], :to => [800,650]).rotate(@red, :angle => 1000).zoom(@red, :scale_from => 0.1, :scale_to => 2)
-			@movie.between(start, stop).move(@green, :from => [800,0], :to => [0,650]).rotate(@green, :angle => 1000).zoom(@green, :scale_from => 0.1, :scale_to => 2)
-			@movie.between(start, stop).move(@blue, :from => [800,600], :to => [0,0]).rotate(@blue, :angle => 1000).zoom(@blue, :scale_from => 0.1, :scale_to => 2)
+			stop = start + 4
+						
+			@movie.resource(@red).move([0,0]).zoom(0.1).between(start, stop).move([800,650]).rotate(1000).zoom(3)
+			@movie.resource(@green).move([800,0]).zoom(0.1).between(start, stop).move([0,650]).rotate(1000).zoom(3)
+			@movie.resource(@blue).move([800,600]).zoom(0.1).between(start, stop).move([0,0]).rotate(1000).zoom(3)
 		end
 	end
 	
