@@ -1,3 +1,8 @@
+2008-08-13
+- Too much to list. New shiny API, better c0dezetc.
+- this CHANGELOG deprecated until further.
+- See http://github.com/ippa/rubygame_movie_maker/commits/master for changes.
+
 2008-08-06:
 - Too much to list, but new actions.. zoom, rotate, play_sound etc
 - Better chaining with "after" method
