@@ -10,25 +10,27 @@ Use it for intros, ingame animations and simple "demos". Namingconventions tries
 == Features:
 
 Basic:
-@movie = MovieMaker.new
-@movie.resource(@sprite)		# choose a resource (for now, a sprite) that following commands will apply on
+* @movie = MovieMaker.new
+* @movie.resource(@sprite)		# choose a resource (for now, a sprite) that following commands will apply on
 
 Timeline Methods
-@movie.between(start_at, stop_at)	# following actions are performered between start_at/stop_at (seconds in floats)
-@movie.at(start_at)		# following actions are performered once at start_at seconds into the movie
-@movie.delay(delay)		# pause timeline for delay seconds
-@movie.during(time)		# perform actions during time in seconds, starting right after the last action
-@movie.then						# perform next action after the last one finishes
+* @movie.between(start_at, stop_at)	# following actions are performered between start_at/stop_at (seconds in floats)
+* @movie.at(start_at)		# following actions are performered once at start_at seconds into the movie
+* @movie.delay(delay)		# pause timeline for delay seconds
+* @movie.during(time)		# perform actions during time in seconds, starting right after the last action
+* @movie.then						# perform next action after the last one finishes
 
-@movie.move([x,y])		# move sprite to x,y coordinates
-@movie.move_facing_direction([x,y])		# move sprite to x,y coordinates, but also turn the sprite in that direction using angle
-@movie.zoom(factor)		# zoom height/width by factor (factor of 2 doubles the size, 0.5 makes it half the size)					
-@movie.rotate(angle)	# rotates clockwise for angle degrees. Give negative angles to rotate counterclockwise.
-@movie.play_sound(sound)	# Play sound-object
+* @movie.move([x,y])		# move sprite to x,y coordinates
+* @movie.move_facing_direction([x,y])		# move sprite to x,y coordinates, but also turn the sprite in that direction using angle
+* @movie.zoom(factor)		# zoom height/width by factor (factor of 2 doubles the size, 0.5 makes it half the size)					
+* @movie.rotate(angle)	# rotates clockwise for angle degrees. Give negative angles to rotate counterclockwise.
+* @movie.accelerate([x,y]) # accelerates resource with the specified [x,y] offset. For example [-1,0] would make object accelerate left.
+* @movie.fade_out				# Fades to total transperency, only GOSU so far.
+* @movie.play_sound(sound)	# Play sound-object
+
 
 All commands are chainable for a clear and verbose way of building scenes. For example:
-
-@movie.resource(@cat).move([0,100]).between(0,5).move([500,100]).rotate(360).then.during(4).move([500,600]).then.play_sound(@sound)
+  @movie.resource(@cat).move([0,100]).between(0,5).move([500,100]).rotate(360).then.during(4).move([500,600]).then.play_sound(@sound)
 
 see samples/ dir for more examples.
 
@@ -43,27 +45,25 @@ You can make the movie play by calling update on it in your gameloop -- just lik
 
 
 == Simple example
-@sprite = Sprite.new("sprite.png")  # create your sprite (should include rubygames Sprites::Sprite)
+  create your sprite (should include rubygames Sprites::Sprite):
+	@sprite = Sprite.new("sprite.png")
+	
 
-# Sets up the movie, give it your initiated @screen-object and @background. MovieMaker supports autocreation of simple colored background as you can see bellow
+Sets up the movie, give it your initiated @screen-object and @background. MovieMaker supports autocreation of simple colored background as you can see bellow
+  movie = MovieMaker::Movie.new(:screen => @screen, :background => Color[:black]) 
 
-	@movie = MovieMaker::Movie.new(:screen => @screen, :background => Color[:black]) 
-
-# 1 sec (1000ms) into the movie, start moving the sprite from x/y: 0,0 (top left of the screen)
-# during 9 seconds (until 10000ms into the movie), set the speed so it will reach position x/y 800,600.
-
+1 sec (1000ms) into the movie, start moving the sprite from x/y: 0,0 (top left of the screen)
+during 9 seconds (until 10000ms into the movie), set the speed so it will reach position x/y 800,600.
   @movie.resource(@sprite).move([0,0]).between(1,10).move([800,600])
 
-# Play the movie you're created, blocks until it's done
-@movie.play
+Play the movie you're created, blocks until it's done
+  @movie.play
 
 
 == Chaining Simple example
 movie_maker supports various chaining of actions, we could for example modify our last example like this:
-
-# Between seconds 1-9, move the sprite across the screen,rotate it 360 degrees at the same time, and when it's done, play a sound woff. Without the ".after."-chaining the sound would have been played after 1 seconds, not 10.
-
-@movie.resource(@sprite).move([0,0]).between(1,10).move([800,600]).rotate(360).then.play_sound(Sound["woff.wav"])
+Between seconds 1-9, move the sprite across the screen,rotate it 360 degrees at the same time, and when it's done, play a sound woff. Without the ".after."-chaining the sound would have been played after 1 seconds, not 10.
+  @movie.resource(@sprite).move([0,0]).between(1,10).move([800,600]).rotate(360).then.play_sound(Sound["woff.wav"])
 
 
 == Requirements
