@@ -4,7 +4,7 @@
 #
 #
 module MovieMaker
-	#module Action
+	module Action
 		#
 		# All actions inherit from this base-class and Should call super in their initialize.
 		# Takes an option-hash: 
@@ -56,6 +56,7 @@ module MovieMaker
 				super(options)
 				@to_x = coordinates[0]
 				@to_y = coordinates[1]
+				@prev_time = 0
 			end
 			
 			def setup
@@ -69,9 +70,13 @@ module MovieMaker
 			# The core of the MoveClass, the actual move-logic
 			def update(time)
 				setup	unless @setup_done
-				time -=  self.start_at
-				@sprite.x = @from_x + time * @x_step
-				@sprite.y = @from_y + time * @y_step
+				time -=  self.start_at			
+				
+				@diff = (time - @prev_time)
+				@prev_time = time
+				
+				@sprite.x += @diff * @x_step.to_f
+				@sprite.y += @diff * @y_step.to_f
 			end
 			
 			def finalize
@@ -80,6 +85,106 @@ module MovieMaker
 				@finalized = true
 			end
 			
+		end
+
+		#
+		# Accelerates a sprite 
+		#
+		class Accelerate < SpriteAction
+		
+			def initialize(options = {}, acceleration = [0,0])
+				super(options)
+				@acceleration_x = acceleration[0]
+				@acceleration_y = acceleration[1]
+				@velocity_x = @acceleration_x
+				@velocity_y = @acceleration_y
+			end
+			
+			def setup
+				#@x_step = @accelerate_x.to_f / @duration.to_f
+				#@y_step = @accelerate_y.to_f / @duration.to_f
+				@setup_done = true
+			end
+			
+			# The core of the MoveClass, the actual move-logic
+			def update(time)
+				setup	unless @setup_done
+				time -=  self.start_at
+
+				@velocity_x += @acceleration_x
+				@velocity_y += @acceleration_y
+				
+				#puts "acceleration: #{@velocity_x}, #{@velocity_y}"
+				@sprite.x += @velocity_x
+				@sprite.y += @velocity_y
+			end
+			
+			def finalize
+				@finalized = true
+			end
+			
+		end
+
+		#
+		# ROTATE
+		#
+		class Rotate < SpriteAction
+			attr_reader :direction
+			def initialize(options = {}, angle = 360)
+				super(options)
+				@angle = angle
+			end
+			
+			def setup
+				@angle_step = @angle.to_f / @duration.to_f
+				@setup_done = true
+			end
+			
+			def update(time)
+				time -= self.start_at
+				setup	unless @setup_done
+				@sprite.angle = (@angle_step * time)
+			end
+			
+			def finalize
+				@sprite.angle = @angle
+				@finalized = true
+			end
+		end
+
+		# Zoom a sprite
+		class Zoom < SpriteAction
+			
+			def initialize(options = {}, factor = 1)
+				super(options)
+				@factor = factor
+			end
+			
+			def setup
+				@scale_from = @sprite.width_scaling || 1
+				@scale = (@scale_from - @factor).abs
+
+				@scale_step = @scale.to_f / @duration.to_f
+				@scale_step = -@scale_step 	if	@factor < @scale_from
+		
+				@setup_done = true
+			end
+			
+			def update(time)
+				time -= self.start_at
+				setup	unless @setup_done
+	
+				scale = @scale_from + @scale_step * time
+				#puts "#{scale} = #{@scale_from} + #{@scale_step} * #{time}"
+				@sprite.width_scaling = scale
+				@sprite.height_scaling = scale
+			end
+			
+			def finalize
+				@sprite.width_scaling = @factor
+				@sprite.height_scaling = @factor
+				@finalized = true
+			end
 		end
 
 		#
@@ -124,30 +229,34 @@ module MovieMaker
 			
 		end
 
-		#
-		# ROTATE
-		#
-		class Rotate < SpriteAction
-			attr_reader :direction
-			def initialize(options = {}, angle = 360)
-				super(options)
-				@angle = angle
-			end
-			
-			def setup
-				@angle_step = @angle.to_f / @duration.to_f
-				@setup_done = true
+
+
+
+
+		# Shows a sprite
+		class Show < SpriteAction
+			def initialize(options = {})
+				super
 			end
 			
 			def update(time)
-				time -= self.start_at
-				setup	unless @setup_done
-				@sprite.angle = -(@angle_step * time)
+			end
+		end
+
+		
+		# Fades a sprite 
+		class FadeTo < SpriteAction
+		
+			def initialize(options = {})
+				super(options)
+				@from = options[:from]
+				@to = options[:to]
+				@alpha = 255
 			end
 			
-			def finalize
-				@sprite.angle = @angle
-				@finalized = true
+			def update(time)
+				@sprite.image.set_alpha(@alpha)
+				@alpha -= 1	if @alpha > 0
 			end
 		end
 
@@ -172,67 +281,35 @@ module MovieMaker
 			end
 			
 		end
-
-		# Zoom a sprite
-		class Zoom < SpriteAction
-			
-			def initialize(options = {}, factor = 1)
+		
+		#
+		# Fades color to total trans
+		# 
+		class FadeOut < SpriteAction
+			def initialize(options = {}, color = 0xFFFFFFFF)
 				super(options)
-				@factor = factor
+				@sprite = options[:object]
+				@prev_time = 0
 			end
 			
 			def setup
-				@scale_from = @sprite.width_scaling || 1
-				@scale = (@scale_from - @factor).abs
-
-				@scale_step = @scale.to_f / @duration.to_f
-				@scale_step = -@scale_step 	if	@factor < @scale_from
-		
-				@setup_done = true
+				@alpha_step = @sprite.color.alpha / @duration
 			end
 			
 			def update(time)
-				time -= self.start_at
 				setup	unless @setup_done
-	
-				scale = @scale_from + @scale_step * time
-				#puts "#{scale} = #{@scale_from} + #{@scale_step} * #{time}"
-				@sprite.width_scaling = scale
-				@sprite.height_scaling = scale
+				time -=  self.start_at			
+				
+				@diff = (time - @prev_time)
+				@prev_time = time
+				
+				@sprite.color.alpha = @sprite.color.alpha - (@diff * @alpha_step.to_f).to_i
 			end
 			
 			def finalize
-				@sprite.width_scaling = @factor
-				@sprite.height_scaling = @factor
+				@sprite.color.alpha = 0
 				@finalized = true
-			end
-		end
-
-
-		# Shows a sprite
-		class Show < SpriteAction
-			def initialize(options = {})
-				super
-			end
-			
-			def update(time)
-			end
-		end
-
-		# Fades a sprite 
-		class FadeTo < SpriteAction
-		
-			def initialize(options = {})
-				super(options)
-				@from = options[:from]
-				@to = options[:to]
-				@alpha = 255
-			end
-			
-			def update(time)
-				@sprite.image.set_alpha(@alpha)
-				@alpha -= 1	if @alpha > 0
-			end
+			end			
 		end
 
 		#
@@ -244,8 +321,35 @@ module MovieMaker
 				@start_at = (options[:start_at]||0) * 1000
 				@stop_at = (options[:stop_at]||0) * 1000
 				@duration = @stop_at - @start_at
+				@finalized = false
+			end
+
+			def started?(current_time)
+				current_time > self.start_at
+			end
+
+			def finalized?
+				@finalized
+			end
+
+		end
+
+		#
+		# Sets Color
+		# 
+		class Color < SimpleAction
+			def initialize(options = {}, color = 0xFFFFFFFF)
+				super(options)
+				@sprite = options[:object]
+				@color = color
+				@color = ::Gosu::Color.new(color)	if color.is_a? Fixnum
+			end
+			def finalize
+				@sprite.color = @color
+				@finalized = true
 			end			
 		end
+
 
 		#
 		# Plays a sound
@@ -263,14 +367,6 @@ module MovieMaker
 				@sound.volume = @volume	if @sound.respond_to? :volume
 			end
 			
-			def started?(current_time)
-				current_time > self.start_at
-			end
-
-			def finalized?
-				@finalized
-			end
-
 			def playing?(current_time)
 				@playing
 			end
@@ -286,5 +382,5 @@ module MovieMaker
 			
 		end
 		
-	#end
+	end
 end

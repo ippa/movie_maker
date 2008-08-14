@@ -17,9 +17,9 @@ class GameWindow < Gosu::MovieMakerWindow
 			@blue = Sprite.new("blue_triangle.png")
 			stop = start + 4
 						
-			@movie.resource(@red).move([0,0]).zoom(0.1).between(start, stop).move([800,650]).rotate(1000).zoom(3)
-			@movie.resource(@green).move([800,0]).zoom(0.1).between(start, stop).move([0,650]).rotate(1000).zoom(3)
-			@movie.resource(@blue).move([800,600]).zoom(0.1).between(start, stop).move([0,0]).rotate(1000).zoom(3)
+			@movie.resource(@red).move([0,0]).zoom(0.1).between(start, stop).move([800,650]).rotate(1000).zoom(3).fade_out
+			@movie.resource(@green).move([800,0]).zoom(0.1).between(start, stop).move([0,650]).rotate(1000).zoom(3).fade_out
+			@movie.resource(@blue).move([800,600]).zoom(0.1).between(start, stop).move([0,0]).rotate(1000).zoom(3).fade_out
 		end
 	end
 	

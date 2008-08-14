@@ -141,6 +141,7 @@ module MovieMaker
 			@update_actions.select { |action| action.playing?(current_time) }.each do |action|
 				dirty_rects << @background.blit(@screen, action.sprite.rect, action.sprite.rect) 
 				action.update(current_time)
+				#puts "update(#{current_time}): #{action.start_at} - #{action.stop_at}" + action.class.to_s
 				@updated_count += 1
 				
 				#
@@ -172,12 +173,11 @@ module MovieMaker
 
 			@onetime_actions.select { |action| action.started?(current_time) and !action.finalized? }.each do |action|
 				#puts "onetime action: #{action.start_at} - #{action.stop_at}" + action.class.to_s
-		
 				action.finalize
 			end
 				
-			@update_actions.select { |action| action.started?(current_time) }.each do |action|
-				#puts "update: #{action.start_at} - #{action.stop_at}" + action.class.to_s
+			@update_actions.select { |action| action.playing?(current_time) }.each do |action|
+				#puts "update(#{current_time}): #{action.start_at} - #{action.stop_at}" + action.class.to_s
 				action.update(current_time)	
 				@updated_count += 1
 			end
@@ -195,7 +195,7 @@ module MovieMaker
 																			action.sprite.angle, 0.5, 0.5, 
 																			action.sprite.width_scaling, 
 																			action.sprite.height_scaling, 
-																			0xffffffff,
+																			action.sprite.color,
 																			:additive)
 			end
 		end
@@ -239,8 +239,8 @@ module MovieMaker
 		#
 		def method_missing(method, *args)
 			
-			## .move ==> Move.new (the class)
-			klass = Kernel.const_get(camelize(method))
+			## ".move" (the string) ==> Move.new (the class)
+			klass = MovieMaker::Action.const_get(camelize(method))
 			
 			options = { :start_at => @start_at, 
 									:stop_at => @stop_at,

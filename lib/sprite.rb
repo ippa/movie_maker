@@ -94,7 +94,7 @@ module MovieMaker
 		#
 		class Sprite			
 			attr_reader :image, :file
-			attr_accessor :x, :y, :angle, :width_scaling, :height_scaling
+			attr_accessor :x, :y, :angle, :width_scaling, :height_scaling, :color
 			def initialize(file, x=0, y=0)
 				@file = file
 				@x, @y = x, y
@@ -102,6 +102,7 @@ module MovieMaker
 				@angle = 0.0
 				@width_scaling = 1.0
 				@height_scaling = 1.0
+				@color = ::Gosu::Color.new(0xffffffff)
 			end
 			
 			# Only relevant with rubygame
@@ -116,7 +117,7 @@ module MovieMaker
 		#
 		class TTFSprite
 			attr_reader :image
-			attr_accessor :x, :y, :angle, :width_scaling, :height_scaling
+			attr_accessor :x, :y, :angle, :width_scaling, :height_scaling, :color
 			def initialize(string, options={})
 				@string = string
 				@color = options[:color] || Color[:black]
@@ -135,6 +136,7 @@ module MovieMaker
 				@angle = 0.0
 				@width_scaling = 1.0
 				@height_scaling = 1.0
+				@color = ::Gosu::Color.new(0xffffffff)
 				#@rect = Rect.new(@position[0], @position[1], *@font.size_text(string))
 				#@image = Surface.new(@rect.size, 0, [SRCCOLORKEY])
 				#@font.render(@string, true, @color).blit(@image,[0,0])
