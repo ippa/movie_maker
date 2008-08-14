@@ -15,31 +15,21 @@ Basic:
 * @movie.resource(@sprite) - choose a resource (for now, a sprite) that following commands will apply on
 
 Timeline Methods
-following actions are performered between start_at/stop_at (seconds in floats)
-* @movie.between(start_at, stop_at)
-following actions are performered once at start_at seconds into the movie
-* @movie.at(start_at)
-pause timeline for delay seconds
-* @movie.delay(delay)
-perform actions during time in seconds, starting right after the last action
-* @movie.during(time)
-perform next action after the last one finishes
-* @movie.then
 
-move sprite to x,y coordinates
-* @movie.move([x,y])
-move sprite to x,y coordinates, but also turn the sprite in that direction using angle
-* @movie.move_facing_direction([x,y])
-zoom height/width by factor (factor of 2 doubles the size, 0.5 makes it half the size)					
-* @movie.zoom(factor)
-rotates clockwise for angle degrees. Give negative angles to rotate counterclockwise.
-* @movie.rotate(angle)
-accelerates resource with the specified [x,y] offset. For example [-1,0] would make object accelerate left.
-* @movie.accelerate([x,y])
-Fades to total transperency, only GOSU so far.
-* @movie.fade_out
-Play sound-object
-* @movie.play_sound(sound)
+* @movie.between(start_at, stop_at) - following actions are performered between start_at/stop_at (seconds in floats)
+* @movie.at(start_at) - following actions are performered once at start_at seconds into the movie
+* @movie.delay(delay) - pause timeline for delay seconds
+* @movie.during(time) - perform actions during time in seconds, starting right after the last action
+* @movie.then - perform next action after the last one finishes
+
+
+* @movie.move([x,y]) - move sprite to x,y coordinates
+* @movie.move_facing_direction([x,y]) - move sprite to x,y coordinates, but also turn the sprite in that direction using angle
+* @movie.zoom(factor) - zoom height/width by factor (factor of 2 doubles the size, 0.5 makes it half the size)					
+* @movie.rotate(angle) - rotates clockwise for angle degrees. Give negative angles to rotate counterclockwise.
+* @movie.accelerate([x,y]) - accelerates resource with the specified [x,y] offset. For example [-1,0] would make object accelerate left.
+* @movie.fade_out - Fades to total transperency, only GOSU so far.
+* @movie.play_sound(sound) - Play sound-object
 
 
 All commands are chainable for a clear and verbose way of building scenes. For example:
