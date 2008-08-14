@@ -47,12 +47,12 @@ You can make the movie play by calling update on it in your gameloop -- just lik
 
 # Sets up the movie, give it your initiated @screen-object and @background. MovieMaker supports autocreation of simple colored background as you can see bellow
 
-@movie = MovieMaker::Movie.new(:screen => @screen, :background => Color[:black]) 
+	@movie = MovieMaker::Movie.new(:screen => @screen, :background => Color[:black]) 
 
 # 1 sec (1000ms) into the movie, start moving the sprite from x/y: 0,0 (top left of the screen)
 # during 9 seconds (until 10000ms into the movie), set the speed so it will reach position x/y 800,600.
 
-@movie.resource(@sprite).move([0,0]).between(1,10).move([800,600])
+  @movie.resource(@sprite).move([0,0]).between(1,10).move([800,600])
 
 # Play the movie you're created, blocks until it's done
 @movie.play
