@@ -140,7 +140,7 @@ module MovieMaker
 			# Only undraw/update actions that are active on the timeline
 			@update_actions.select { |action| action.playing?(current_time) }.each do |action|
 				dirty_rects << @background.blit(@screen, action.sprite.rect, action.sprite.rect) 
-				action.update(current_time)
+				action.update(current_time - action.start_at)
 				#puts "update(#{current_time}): #{action.start_at} - #{action.stop_at}" + action.class.to_s
 				@updated_count += 1
 				
@@ -178,7 +178,7 @@ module MovieMaker
 				
 			@update_actions.select { |action| action.playing?(current_time) }.each do |action|
 				#puts "update(#{current_time}): #{action.start_at} - #{action.stop_at}" + action.class.to_s
-				action.update(current_time)	
+				action.update(current_time - action.start_at)
 				@updated_count += 1
 			end
 				

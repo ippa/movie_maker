@@ -78,7 +78,6 @@ module MovieMaker
 			# The core of the MoveClass, the actual move-logic
 			def update(time)
 				setup	unless @setup_done
-				time -=  self.start_at			
 				
 				@diff = (time - @prev_time)
 				@prev_time = time
@@ -96,10 +95,9 @@ module MovieMaker
 		end
 
 		#
-		# Accelerates a sprite 
+		# ACCELERATE
 		#
 		class Accelerate < SpriteAction
-		
 			def initialize(options = {}, acceleration = [0,0])
 				super(options)
 				@acceleration_x = acceleration[0]
@@ -109,16 +107,28 @@ module MovieMaker
 			end
 			
 			def update(time)
-				setup	unless @setup_done
-				time -=  self.start_at
-
 				@velocity_x += @acceleration_x
 				@velocity_y += @acceleration_y
 				
 				@sprite.x += @velocity_x
 				@sprite.y += @velocity_y
+			end			
+		end
+
+		#
+		# ACCELERATE
+		#
+		class Velocity < SpriteAction
+			def initialize(options = {}, velocity = [0,0])
+				super(options)
+				@velocity_x = velocity[0]
+				@velocity_y = velocity[1]
 			end
 			
+			def update(time)
+				@sprite.x += @velocity_x
+				@sprite.y += @velocity_y
+			end			
 		end
 
 		#
@@ -137,7 +147,6 @@ module MovieMaker
 			end
 			
 			def update(time)
-				time -= self.start_at
 				setup	unless @setup_done
 				@sprite.angle = (@angle_step * time)
 			end
@@ -167,7 +176,6 @@ module MovieMaker
 			end
 			
 			def update(time)
-				time -= self.start_at
 				setup	unless @setup_done
 	
 				scale = @scale_from + @scale_step * time
@@ -212,7 +220,6 @@ module MovieMaker
 			
 			# The core of the MoveClass, the actual move-logic
 			def update(time)
-				time -=  self.start_at
 				setup	unless @setup_done
 				
 				@sprite.x = @from_x + time * @x_step
@@ -272,7 +279,6 @@ module MovieMaker
 			end
 			
 			def update(time)
-				time -= self.start_at
 				setup	unless @setup_done
 			end
 			
@@ -295,7 +301,6 @@ module MovieMaker
 			
 			def update(time)
 				setup	unless @setup_done
-				time -=  self.start_at			
 				
 				@diff = (time - @prev_time)
 				@prev_time = time

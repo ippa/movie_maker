@@ -12,17 +12,16 @@ class GameWindow < Gosu::MovieMakerWindow
 		@movie = Movie.new(:framework => :gosu, :screen => $screen)
 		0.upto(200) do |start|
 			
-			@star_5 = Sprite.new("star_5.png")	# x,y = 0,0 is default
-			@star_6 = Sprite.new("star_6.png")
-			start = start / 10.0
-			stop = start + 2
-			angle = 90 * rand(10)
-			downwards_acceleration = 0.05 + rand(0.1)
-			zoom_from = 0.2
-			zoom_to = 1.0 + rand(2.0)
-			color = Color.new(100 + rand(155),rand(255),rand(255),rand(255))
-			
-			@movie.resource(@star_5).color(color).zoom(zoom_from).between(start, stop).move([500,100]).accelerate([0,downwards_acceleration]).rotate(angle).zoom(zoom_to).fade_out.then.color(0x00FFFFFF)
+			@star = Sprite.new("star_5.png")	# x,y = 0,0 is default
+			@movie.resource(@star)
+			@movie.color( Color.new(100 + rand(155),rand(255),rand(255),rand(255)) )
+			@movie.zoom(0.2)
+			@movie.between(start/10.0, start/10.0 + 2)
+			@movie.velocity([10,0])
+			@movie.accelerate([0, 0.05 + rand(0.1)])
+			@movie.rotate(angle = 90 * rand(10))
+			@movie.zoom(1.0 + rand(2.0))
+			@movie.fade_out.then.color(0x00FFFFFF)
 		end
 	end
 	
