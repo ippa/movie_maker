@@ -29,6 +29,7 @@ Action Methods
 * @movie.zoom(factor) - zoom height/width by factor (factor of 2 doubles the size, 0.5 makes it half the size)					
 * @movie.rotate(angle) - rotates clockwise for angle degrees. Give negative angles to rotate counterclockwise.
 * @movie.accelerate([x,y]) - accelerates resource with the specified [x,y] offset. For example [-1,0] would make object accelerate left.
+* @movie.velocity([x,y]) - sets static velocity specified [x,y] offset. For example [-1,0] would make object move left in a constant rate.
 * @movie.fade_out - Fades to total transperency, only GOSU so far.
 * @movie.play_sound(sound) - Play sound-object
 
