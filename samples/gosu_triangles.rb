@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require File.join("..", "rubygame_movie_maker")
-require 'base.rb'
+require 'gosu_base.rb'
 
 class GameWindow < Gosu::MovieMakerWindow
 	def initialize
