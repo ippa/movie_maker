@@ -22,6 +22,7 @@ Timeline Methods
 * @movie.during(time) - perform actions during time in seconds, starting right after the last action
 * @movie.then - perform next action after the last one finishes
 
+Action Methods
 
 * @movie.move([x,y]) - move sprite to x,y coordinates
 * @movie.move_facing_direction([x,y]) - move sprite to x,y coordinates, but also turn the sprite in that direction using angle
