@@ -54,9 +54,8 @@ You can make the movie play by calling update on it in your gameloop -- just lik
 
 == Simple example
 create your sprite (should include rubygames Sprites::Sprite):
-	@sprite = Sprite.new("sprite.png")
+  @sprite = Sprite.new("sprite.png")
 	
-
 Sets up the movie, give it your initiated @screen-object and @background. MovieMaker supports autocreation of simple colored background as you can see bellow
   movie = MovieMaker::Movie.new(:screen => @screen, :background => Color[:black]) 
 
@@ -73,6 +72,69 @@ movie_maker supports various chaining of actions, we could for example modify ou
 Between seconds 1-9, move the sprite across the screen,rotate it 360 degrees at the same time, and when it's done, play a sound woff. Without the ".after."-chaining the sound would have been played after 1 seconds, not 10.
   @movie.resource(@sprite).move([0,0]).between(1,10).move([800,600]).rotate(360).then.play_sound(Sound["woff.wav"])
 
+
+== Gosu Example
+Since Gosu has a different approach then rubygame a longer example is needed:
+
+	class MovieMakerWindow < Gosu::Window
+		def initialize
+			$screen = super(800, 600, false)
+			
+			# Make Surface & Sound behave like shortcuts to GOSUs Image & Sample
+			require 'gosu_autoload'
+			
+			# Set our autoloading dirs for quick and easy access to images and samples
+			Surface.autoload_dirs = [ File.join("samples", "media"), "media" ]
+			Sound.autoload_dirs = [ File.join("samples", "media"), "media" ]
+	
+			@clock = ::Gosu::Clock.new
+			@clock.target_framerate = 200
+
+			setup_movie
+		end
+		
+		#
+		# It's there the movie gets created
+		#
+		def setup_movie
+			@movie = Movie.new(:framework => :gosu, :screen => $screen)
+			0.upto(200) do |start|
+				@star = Sprite.new("star_5.png")	# x,y = 0,0 is default
+				@movie.resource(@star)						# all following actions are applied to this resource
+				@movie.color( Color.new(100 + rand(155),rand(255),rand(255),rand(255)) )
+				@movie.zoom(0.2)
+				@movie.between(start/10.0, start/10.0 + 2)
+				@movie.velocity([10,0])
+				@movie.acceleration([0, 0.05 + rand(0.1)])
+				@movie.rotate(angle = 90 * rand(10))
+				@movie.zoom(1.0 + rand(2.0))
+				@movie.fade_out.then.color(0x00FFFFFF)
+			end
+		end
+
+		#
+		# Gosu calls update() automaticly
+		#
+		def update
+			@tick = @clock.tick()
+			
+			if @movie.playing?(@clock.lifetime)
+				@movie.gosu_update(@clock.lifetime)
+				self.caption = "[framerate: #{@clock.framerate.to_i}] [Spriteupdates: #{@movie.updated_count}] [#{@clock.lifetime} : #{@movie.stop_at}]"
+			else
+				close
+			end
+		end
+		
+		#
+		# Gosu calls draw() automaticly
+		#
+		def draw
+			@movie.gosu_draw(@clock.lifetime)
+		end
+	end
+	
+	MovieMakerWindow.new.show		# Initialize and show main gosu window (starts calling update/draw)
 
 == Requirements
 Rubygame 2.3+ or Gosu 0.7.9+
