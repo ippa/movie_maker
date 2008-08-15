@@ -22,15 +22,18 @@ Timeline Methods
 * @movie.during(time) - perform actions during time in seconds, starting right after the last action
 * @movie.then - perform next action after the last one finishes
 
-Action Methods
+Action Methods connected to timeline
 
 * @movie.move([x,y]) - move sprite to x,y coordinates
 * @movie.move_facing_direction([x,y]) - move sprite to x,y coordinates, but also turn the sprite in that direction using angle
 * @movie.zoom(factor) - zoom height/width by factor (factor of 2 doubles the size, 0.5 makes it half the size)					
 * @movie.rotate(angle) - rotates clockwise for angle degrees. Give negative angles to rotate counterclockwise.
-* @movie.accelerate([x,y]) - accelerates resource with the specified [x,y] offset. For example [-1,0] would make object accelerate left.
-* @movie.velocity([x,y]) - sets static velocity specified [x,y] offset. For example [-1,0] would make object move left in a constant rate.
 * @movie.fade_out - Fades to total transperency, only GOSU so far.
+
+Actions not connected to timelime
+
+* @movie.acceleration([x,y]) - accelerates resource with the specified [x,y] offset. For example [-1,0] would make object accelerate left.
+* @movie.velocity([x,y]) - sets static velocity specified [x,y] offset. For example [-1,0] would make object move left in a constant rate.
 * @movie.play_sound(sound) - Play sound-object
 
 
