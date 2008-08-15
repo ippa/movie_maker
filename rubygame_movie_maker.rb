@@ -42,6 +42,8 @@ module MovieMaker
 			@framework = options[:framework] || :rubygame	# this can also be :gosu
 			@target_framerate = options[:target_framerate] || 100
 			@background = options[:background] || nil
+			@draw_mode = options[:draw_mode] || nil
+			
 			if options[:background].kind_of? ::Rubygame::Color::ColorRGB
 				@background = Surface.new(@screen.size)
 				@background.draw_box_s([0,0],[@screen.width,@screen.height], options[:background])
@@ -196,7 +198,7 @@ module MovieMaker
 																			action.sprite.width_scaling, 
 																			action.sprite.height_scaling, 
 																			action.sprite.color,
-																			:additive)
+																			(@draw_mode || action.sprite.draw_mode))
 			end
 		end
 			

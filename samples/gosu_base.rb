@@ -18,7 +18,7 @@ module Gosu
 	
 			@clock = ::Gosu::Clock.new
 			@clock.target_framerate = 200
-			
+
 			self
 		end
 	

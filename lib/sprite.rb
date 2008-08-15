@@ -94,10 +94,13 @@ module MovieMaker
 		#
 		class Sprite			
 			attr_reader :image, :file
-			attr_accessor :x, :y, :angle, :width_scaling, :height_scaling, :color
-			def initialize(file, x=0, y=0)
+			attr_accessor :x, :y, :angle, :width_scaling, :height_scaling, :color, :draw_mode
+			def initialize(file, options = {})
+				@x = options[:x] || 0
+				@y = options[:y] || 0
+				@draw_mode = options[:draw_mode] || :additive
+				
 				@file = file
-				@x, @y = x, y
 				@image = Surface.autoload(@file)
 				@angle = 0.0
 				@width_scaling = 1.0
@@ -117,7 +120,7 @@ module MovieMaker
 		#
 		class TTFSprite
 			attr_reader :image
-			attr_accessor :x, :y, :angle, :width_scaling, :height_scaling, :color
+			attr_accessor :x, :y, :angle, :width_scaling, :height_scaling, :color, :draw_mode
 			def initialize(string, options={})
 				@string = string
 				@color = options[:color] || Color[:black]
@@ -128,6 +131,7 @@ module MovieMaker
 				
 				@x = options[:x] || @position[0]
 				@y = options[:y] || @position[1]
+				@draw_mode = options[:draw_mode] || :additive
 				
 				if @font.nil?
 					@font = TTF.new(File.join("fonts", @fontname), @size)
