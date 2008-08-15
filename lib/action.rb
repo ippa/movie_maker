@@ -143,6 +143,7 @@ module MovieMaker
 			
 			def setup
 				@angle_step = @angle.to_f / @duration.to_f
+				@angle_step = -@angle_step 	if @framework == :rubygame
 				@setup_done = true
 			end
 			

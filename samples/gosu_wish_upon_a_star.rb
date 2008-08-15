@@ -25,9 +25,10 @@ class GameWindow < Gosu::MovieMakerWindow
 			@movie.zoom(zoom).color(color)
 			
 			# the "movie" (resource is still choosen)
-			#@movie.between(start, start+7).move([x,700]).rotate(200-rand(400))
 			@movie.between(start, start+10).velocity([0,1.2+rand(0)/5]).rotate(200-rand(400))
-			if rand(10) == 0 # A falling star
+			
+			# A falling star
+			if rand(10) == 0
 				@movie.at(start+2+rand(4)).zoom(zoom+0.3).color(flash).during(1).rotate(720).zoom(0.01).fade_out
 			end
 		end
