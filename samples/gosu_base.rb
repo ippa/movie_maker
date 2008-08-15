@@ -25,12 +25,12 @@ module Gosu
 		def update
 			@tick = @clock.tick()
 			
-			if @movie.playing?(@clock.lifetime)
+			#if @movie.playing?(@clock.lifetime)
 				@movie.gosu_update(@clock.lifetime)
 				self.caption = "[framerate: #{@clock.framerate.to_i}] [Spriteupdates: #{@movie.updated_count}] [#{@clock.lifetime} : #{@movie.stop_at}]"
-			else
-				close
-			end
+			#else
+			#	close
+			#end
 		end
 		
 		def draw

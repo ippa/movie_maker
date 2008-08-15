@@ -43,6 +43,7 @@ module MovieMaker
 			@target_framerate = options[:target_framerate] || 100
 			@background = options[:background] || nil
 			@draw_mode = options[:draw_mode] || nil
+			@loop = options[:loop] || false
 			
 			if options[:background].kind_of? ::Rubygame::Color::ColorRGB
 				@background = Surface.new(@screen.size)
@@ -53,6 +54,7 @@ module MovieMaker
 			@onetime_actions = []
 			@update_actions = []
 			@tick = @start_at = @stop_at = 0
+			@restart_at = nil
 		end
 			
 		#
@@ -63,6 +65,13 @@ module MovieMaker
 		#
 		def stop_at
 			@movie_stop_at ||= @actions.inject(0) { |time, action| action.stop_at > time ? action.stop_at : time }
+		end
+		
+		#
+		# Is movie still playing?
+		#
+ 		def playing?(current_time)
+			current_time <= stop_at 
 		end
 						
 		#
@@ -113,9 +122,6 @@ module MovieMaker
 			end
 		end
 		
-		def playing?(current_time)
-			current_time <= stop_at 
-		end
 		#
 		# rubygame_update() - Rubygame specific update
 		# Rubygame specific include: blit, sprite rects, dirty_rects and update_rects
@@ -172,7 +178,11 @@ module MovieMaker
 		#
 		def gosu_update(current_time)
 			@updated_count = 0
-
+	
+			# Restart movie cleanly?
+			if current_time > @restart_at
+			end
+			
 			@onetime_actions.select { |action| action.started?(current_time) and !action.finalized? }.each do |action|
 				#puts "onetime action: #{action.start_at} - #{action.stop_at}" + action.class.to_s
 				action.finalize
@@ -202,17 +212,23 @@ module MovieMaker
 			end
 		end
 			
-			
+		
+		def restart_at(time)
+			@restart_at = time
+			self
+		end
 		#
 		# Stops/resets the movie- NOT YET IMPLEMENTED
 		#
 		def stop
+			self
 		end
 			
 		#
 		# Pauses the movie, which should resume with a call to play() - NOT YET IMPLEMENTED
 		#
 		def pause
+			self
 		end
 			
 			
