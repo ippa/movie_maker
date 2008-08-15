@@ -14,7 +14,7 @@ Basic:
 * @movie = MovieMaker.new
 * @movie.resource(@sprite) - choose a resource (for now, a sprite) that following commands will apply on
 
-Timeline Methods
+Timeline methods
 
 * @movie.between(start_at, stop_at) - following actions are performered between start_at/stop_at (seconds in floats)
 * @movie.at(start_at) - following actions are performered once at start_at seconds into the movie
@@ -22,7 +22,7 @@ Timeline Methods
 * @movie.during(time) - perform actions during time in seconds, starting right after the last action
 * @movie.then - perform next action after the last one finishes
 
-Action Methods connected to timeline
+Action modifying a resource + are influenced by the timeline methods
 
 * @movie.move([x,y]) - move sprite to x,y coordinates
 * @movie.move_facing_direction([x,y]) - move sprite to x,y coordinates, but also turn the sprite in that direction using angle
@@ -30,10 +30,13 @@ Action Methods connected to timeline
 * @movie.rotate(angle) - rotates clockwise for angle degrees. Give negative angles to rotate counterclockwise.
 * @movie.fade_out - Fades to total transperency, only GOSU so far.
 
-Actions not connected to timelime
+Actions modifying a resource
 
 * @movie.acceleration([x,y]) - accelerates resource with the specified [x,y] offset. For example [-1,0] would make object accelerate left.
 * @movie.velocity([x,y]) - sets static velocity specified [x,y] offset. For example [-1,0] would make object move left in a constant rate.
+
+Actions doing a single thing
+
 * @movie.play_sound(sound) - Play sound-object
 
 
@@ -99,8 +102,10 @@ Since Gosu has a different approach then rubygame a longer example is needed:
 		def setup_movie
 			@movie = Movie.new(:framework => :gosu, :screen => $screen)
 			0.upto(200) do |start|
-				@star = Sprite.new("star_5.png")	# x,y = 0,0 is default
-				@movie.resource(@star)						# all following actions are applied to this resource
+				# x,y = 0,0 is default
+				@star = Sprite.new("star_5.png")
+				# all following actions are applied to this resource
+				@movie.resource(@star)
 				@movie.color( Color.new(100 + rand(155),rand(255),rand(255),rand(255)) )
 				@movie.zoom(0.2)
 				@movie.between(start/10.0, start/10.0 + 2)
