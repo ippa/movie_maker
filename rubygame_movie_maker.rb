@@ -180,8 +180,8 @@ module MovieMaker
 			@updated_count = 0
 	
 			# Restart movie cleanly?
-			if current_time > @restart_at
-			end
+			#if current_time > @restart_at
+			#end
 			
 			@onetime_actions.select { |action| action.started?(current_time) and !action.finalized? }.each do |action|
 				#puts "onetime action: #{action.start_at} - #{action.stop_at}" + action.class.to_s

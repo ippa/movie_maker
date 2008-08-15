@@ -17,7 +17,7 @@ class GameWindow < Gosu::MovieMakerWindow
 			@movie.zoom(0.2)
 			@movie.between(start/10.0, start/10.0 + 2)
 			@movie.velocity([10,0])
-			@movie.accelerate([0, 0.05 + rand(0.1)])
+			@movie.acceleration([0, 0.05 + rand(0.1)])
 			@movie.rotate(angle = 90 * rand(10))
 			@movie.zoom(1.0 + rand(2.0))
 			@movie.fade_out.then.color(0x00FFFFFF)

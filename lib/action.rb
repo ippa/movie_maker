@@ -95,9 +95,9 @@ module MovieMaker
 		end
 
 		#
-		# ACCELERATE
+		# ACCELERATION
 		#
-		class Accelerate < SpriteAction
+		class Acceleration < SpriteAction
 			def initialize(options = {}, acceleration = [0,0])
 				super(options)
 				@acceleration_x = acceleration[0]
