@@ -11,9 +11,8 @@ class GameWindow < Gosu::MovieMakerWindow
 	def setup_movie
 		@movie = Movie.new(:framework => :gosu, :screen => $screen)
 		0.upto(200) do |start|
-			
 			@star = Sprite.new("star_5.png")	# x,y = 0,0 is default
-			@movie.resource(@star)
+			@movie.resource(@star)						# all following actions are applied to this resource
 			@movie.color( Color.new(100 + rand(155),rand(255),rand(255),rand(255)) )
 			@movie.zoom(0.2)
 			@movie.between(start/10.0, start/10.0 + 2)
