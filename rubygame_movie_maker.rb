@@ -261,7 +261,7 @@ module MovieMaker
 			
 			
 			action = klass.new(options, *standard_args)
-			#puts "ACTION: #{action.class} - #{standard_args}"
+			#puts "ACTION: #{action.class}(#{standard_args}) - between(#{@start_at}, #{@stop_at})"
 			
 			@actions << action
 			#

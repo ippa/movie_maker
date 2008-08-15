@@ -62,7 +62,7 @@
      id="layer1">
     <path
        sodipodi:type="star"
-       style="opacity:0.8;fill:#b3b3b3;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:18.17716599;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:0.512;fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:18.17716598999999900;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path2389"
        sodipodi:sides="5"
        sodipodi:cx="154.28571"
@@ -76,7 +76,7 @@
        inkscape:randomized="0"
        d="M 246.77142,1009.305 L 200.03168,1252.8498 L 90.667225,1030.2783 L -155.40096,1061.0856 L 22.481603,888.2955 L -82.85715,663.79074 L 136.44477,779.57202 L 317.41003,610.01312 L 275.0635,854.36003 L 492.24494,974.07163 L 246.77142,1009.305 z"
        transform="matrix(0.8660254,-0.5,0.5,0.8660254,-245.83589,-213.84628)"
-       inkscape:export-filename="C:\Dev\projects\rubygame_movie_maker\samples\media\triangle_5.png"
+       inkscape:export-filename="C:\Dev\projects\rubygame_movie_maker\samples\media\star_5.png"
        inkscape:export-xdpi="27.559999"
        inkscape:export-ydpi="27.559999" />
   </g>

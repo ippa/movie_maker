@@ -20,9 +20,9 @@ class GameWindow < Gosu::MovieMakerWindow
 			downwards_acceleration = 0.05 + rand(0.1)
 			zoom_from = 0.2
 			zoom_to = 1.0 + rand(2.0)
-			color = ::Gosu::Color.new(100 + rand(155),rand(255),rand(255),rand(255))
+			color = Color.new(100 + rand(155),rand(255),rand(255),rand(255))
 			
-			@movie.resource(@star_5).color(color).zoom(zoom_from).between(start, stop).move([500,100]).accelerate([0,downwards_acceleration]).rotate(angle).zoom(zoom_to).then.color(0x000000)
+			@movie.resource(@star_5).color(color).zoom(zoom_from).between(start, stop).move([500,100]).accelerate([0,downwards_acceleration]).rotate(angle).zoom(zoom_to).fade_out.then.color(0x00FFFFFF)
 		end
 	end
 	

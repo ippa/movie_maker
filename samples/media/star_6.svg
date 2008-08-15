@@ -13,8 +13,11 @@
    id="svg2"
    sodipodi:version="0.32"
    inkscape:version="0.46"
-   sodipodi:docname="triangle_6.svg"
-   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+   sodipodi:docname="star_6.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="C:\dev\projects\rubygame_movie_maker\samples\media\star_6.png"
+   inkscape:export-xdpi="29.873182"
+   inkscape:export-ydpi="29.873182">
   <defs
      id="defs4">
     <inkscape:perspective
@@ -62,7 +65,7 @@
      id="layer1">
     <path
        sodipodi:type="star"
-       style="opacity:0.8;fill:#b3b3b3;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:18.17716599;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:0.80000000000000004;fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:18.17716598999999900;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path2389"
        sodipodi:sides="6"
        sodipodi:cx="154.28571"

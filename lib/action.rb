@@ -33,7 +33,15 @@ module MovieMaker
 				@setup_done = false
 				@image = @sprite.image # used in MovieMaker#play
 			end
-			
+
+			def setup
+				@setup_done = true
+			end
+
+			def finalize
+				@finalized = true
+			end
+
 			def finalized?
 				@finalized
 			end
@@ -100,13 +108,6 @@ module MovieMaker
 				@velocity_y = @acceleration_y
 			end
 			
-			def setup
-				#@x_step = @accelerate_x.to_f / @duration.to_f
-				#@y_step = @accelerate_y.to_f / @duration.to_f
-				@setup_done = true
-			end
-			
-			# The core of the MoveClass, the actual move-logic
 			def update(time)
 				setup	unless @setup_done
 				time -=  self.start_at
@@ -114,13 +115,8 @@ module MovieMaker
 				@velocity_x += @acceleration_x
 				@velocity_y += @acceleration_y
 				
-				#puts "acceleration: #{@velocity_x}, #{@velocity_y}"
 				@sprite.x += @velocity_x
 				@sprite.y += @velocity_y
-			end
-			
-			def finalize
-				@finalized = true
 			end
 			
 		end
@@ -294,6 +290,7 @@ module MovieMaker
 			
 			def setup
 				@alpha_step = @sprite.color.alpha / @duration
+				@setup_done = true
 			end
 			
 			def update(time)
@@ -302,8 +299,8 @@ module MovieMaker
 				
 				@diff = (time - @prev_time)
 				@prev_time = time
-				
-				@sprite.color.alpha = @sprite.color.alpha - (@diff * @alpha_step.to_f).to_i
+		
+				@sprite.color.alpha = @sprite.color.alpha - (@diff.to_f * @alpha_step.to_f).to_i
 			end
 			
 			def finalize
