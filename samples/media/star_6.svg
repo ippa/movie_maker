@@ -65,7 +65,7 @@
      id="layer1">
     <path
        sodipodi:type="star"
-       style="opacity:0.80000000000000004;fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:18.17716598999999900;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:1;fill:#f2f2f2;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:18.17716598999999900;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path2389"
        sodipodi:sides="6"
        sodipodi:cx="154.28571"
@@ -78,6 +78,9 @@
        inkscape:rounded="0"
        inkscape:randomized="0"
        d="M 246.77142,1009.305 L 235.37174,1246.2028 L 116.57358,1040.9286 L -94.285728,1149.505 L 24.087866,943.98573 L -175.37176,815.66444 L 61.799987,815.41932 L 73.199675,578.52157 L 191.99783,783.79577 L 402.85714,675.21932 L 284.48355,880.73863 L 483.94317,1009.0599 L 246.77142,1009.305 z"
-       transform="matrix(0.9659258,0.258819,-0.258819,0.9659258,444.25101,-428.84409)" />
+       transform="matrix(0.9659258,0.258819,-0.258819,0.9659258,444.25101,-428.84409)"
+       inkscape:export-filename="C:\dev\projects\rubygame_movie_maker\samples\media\star_6.png"
+       inkscape:export-xdpi="34"
+       inkscape:export-ydpi="34" />
   </g>
 </svg>
