@@ -5,7 +5,11 @@ $: << File.join(File.dirname(__FILE__), 'lib')
 end
 
 ['action','sprite','core_extensions', 'gosu_clock'].each do |lib|
-	require File.join(File.dirname(__FILE__), 'lib', lib)
+	require File.join(File.dirname(__FILE__), 'movie_maker', lib)
+end
+
+module MovieMaker
+  VERSION = "0.3.0"
 end
 
 #

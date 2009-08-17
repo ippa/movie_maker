@@ -1,4 +1,5 @@
-= rubygame_movie_maker README
+= MovieMaker README
+Automate image movements/effects and sounds over a period of time, useful for games.
 
 == What is it?
 A rubylibrary to automate sprite movement/effects and sound over a timeline.

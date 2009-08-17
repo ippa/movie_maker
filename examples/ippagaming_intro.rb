@@ -1,5 +1,5 @@
 #!/usr/bin/ruby
-require File.join("..", "rubygame_movie_maker")
+require File.join("..", "lib", "movie_maker")
 
 include Rubygame
 include MovieMaker

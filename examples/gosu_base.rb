@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require File.join("..", "rubygame_movie_maker")
+require File.join("..", "lib", "movie_maker")
 
 #
 # Usefull stuff for the Gosu examples
