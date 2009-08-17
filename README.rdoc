@@ -1,4 +1,7 @@
 = MovieMaker README
+http://github.com/ippa/movie_maker/tree/master
+
+== DESCRIPTION
 Automate image movements/effects and sounds over a period of time, useful for games.
 
 == What is it?
